@@ -3544,7 +3544,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 140.97 76.2 0)
 			(effects
 				(font
@@ -3689,7 +3689,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_1.27mm:PinHeader_1x03_P1.27mm_Vertical"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 			(at 196.85 107.95 0)
 			(effects
 				(font
@@ -3843,7 +3843,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 123.19 76.2 0)
 			(effects
 				(font
@@ -3922,7 +3922,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 203.2 76.2 0)
 			(effects
 				(font
@@ -4000,7 +4000,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 140.97 144.78 0)
 			(effects
 				(font
@@ -4202,7 +4202,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 176.53 76.2 0)
 			(effects
 				(font
@@ -4494,7 +4494,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 158.75 76.2 0)
 			(effects
 				(font
@@ -4573,7 +4573,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 158.75 144.78 0)
 			(effects
 				(font
@@ -4643,7 +4643,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Crystal:Crystal_DS10_D1.0mm_L4.3mm_Vertical"
+		(property "Footprint" "Crystal:Crystal_Round_D2.0mm_Vertical"
 			(at 138.43 110.49 0)
 			(effects
 				(font
@@ -4713,7 +4713,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 125.73 144.78 0)
 			(effects
 				(font
@@ -4849,7 +4849,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 149.86 76.2 0)
 			(effects
 				(font
@@ -4928,7 +4928,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Battery:BatteryHolder_Keystone_103_1x20mm"
 			(at 214.63 145.796 90)
 			(effects
 				(font
@@ -4998,7 +4998,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 194.31 76.2 0)
 			(effects
 				(font
@@ -5077,7 +5077,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 213.36 76.2 0)
 			(effects
 				(font
@@ -5156,7 +5156,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 185.42 76.2 0)
 			(effects
 				(font
@@ -5301,7 +5301,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 132.08 76.2 0)
 			(effects
 				(font
@@ -5380,7 +5380,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D3.0mm"
 			(at 167.64 76.2 0)
 			(effects
 				(font
