@@ -8,5 +8,5 @@ int main(void) {
   while(1){asm("nop");}
 }
 
-//[pc5:0,pd7:3] for time output
-//pc5:0 - 0c1a, rest 0c1b
+//[pd3:7,pc0:5] for time output
+//pc0:5 - 0c1b, rest 0c1a

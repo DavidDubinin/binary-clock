@@ -2224,6 +2224,16 @@
 		)
 		(uuid "b5552147-3444-486c-870f-27f5fea5a2bc")
 	)
+	(text "HOURS"
+		(exclude_from_sim no)
+		(at 141.986 66.802 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "c26b2a3e-e876-4a1d-9442-5e053656bc22")
+	)
 	(text "Binary clock output LEDs"
 		(exclude_from_sim no)
 		(at 131.826 59.182 0)
@@ -2233,6 +2243,16 @@
 			)
 		)
 		(uuid "e63b706c-750f-41db-aea8-c6f02b76fa08")
+	)
+	(text "MINUTES"
+		(exclude_from_sim no)
+		(at 189.738 66.548 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "eff05568-a1d5-4146-ad04-72ec0543577f")
 	)
 	(text "ATMEGA48 MCU"
 		(exclude_from_sim no)
@@ -2257,37 +2277,37 @@
 		(uuid "32984c20-0b01-4a60-afe0-1035024add29")
 	)
 	(junction
-		(at 132.08 72.39)
+		(at 177.8 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3e0f1e3c-d410-459b-8ea8-74937486b41e")
 	)
 	(junction
-		(at 158.75 72.39)
+		(at 123.19 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "6297fa64-4dd3-49aa-bdde-666b4e043304")
-	)
-	(junction
-		(at 194.31 72.39)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "70ee003a-e99d-48b7-8f3c-c932adcefac3")
+		(uuid "6cbf0f0b-8cdb-4156-97b6-3e78a25a9f97")
 	)
 	(junction
 		(at 140.97 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
+		(uuid "70ee003a-e99d-48b7-8f3c-c932adcefac3")
+	)
+	(junction
+		(at 186.69 72.39)
+		(diameter 0)
+		(color 0 0 0 0)
 		(uuid "76277268-1916-4374-baeb-ce6e442d40d0")
 	)
 	(junction
-		(at 176.53 72.39)
+		(at 204.47 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "8adc9952-9983-41bd-913a-493835ddd034")
+		(uuid "82ddd2a4-fe1b-4aa8-9702-9bf5328f6ec0")
 	)
 	(junction
-		(at 185.42 72.39)
+		(at 132.08 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "979da1e1-8188-4326-9630-e444b5f147ca")
@@ -2305,13 +2325,13 @@
 		(uuid "b2849f2c-25fe-4ab9-89c6-c01366b11eaa")
 	)
 	(junction
-		(at 203.2 72.39)
+		(at 149.86 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b80518da-5a46-4053-802e-5f14482e4f0e")
 	)
 	(junction
-		(at 149.86 72.39)
+		(at 195.58 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "bd13f43e-d399-4e88-843f-1ff9d574f260")
@@ -2323,7 +2343,7 @@
 		(uuid "cdaae8a2-640c-4e81-aa24-496922eb7603")
 	)
 	(junction
-		(at 123.19 72.39)
+		(at 168.91 72.39)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "ec80ba28-b413-4759-90b1-2f1182e0de96")
@@ -2358,7 +2378,7 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 72.39) (xy 194.31 72.39)
+			(xy 132.08 72.39) (xy 140.97 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2378,7 +2398,7 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 80.01) (xy 176.53 83.82)
+			(xy 123.19 80.01) (xy 123.19 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2388,23 +2408,13 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 72.39) (xy 213.36 72.39)
+			(xy 149.86 72.39) (xy 160.02 72.39)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "1f91ce62-cea5-4f9d-9572-3fbb52852bfc")
-	)
-	(wire
-		(pts
-			(xy 158.75 72.39) (xy 167.64 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "219848ee-908d-4a42-84df-8ebc327ada95")
 	)
 	(wire
 		(pts
@@ -2478,7 +2488,7 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 72.39) (xy 203.2 72.39)
+			(xy 140.97 72.39) (xy 149.86 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2508,7 +2518,7 @@
 	)
 	(wire
 		(pts
-			(xy 213.36 80.01) (xy 213.36 83.82)
+			(xy 160.02 80.01) (xy 160.02 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2528,7 +2538,7 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 72.39) (xy 132.08 72.39)
+			(xy 168.91 72.39) (xy 177.8 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2558,7 +2568,17 @@
 	)
 	(wire
 		(pts
-			(xy 158.75 80.01) (xy 158.75 83.82)
+			(xy 204.47 72.39) (xy 213.36 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64d03ab5-fa89-458d-a094-f3a05157d0af")
+	)
+	(wire
+		(pts
+			(xy 204.47 80.01) (xy 204.47 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2568,7 +2588,7 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 72.39) (xy 185.42 72.39)
+			(xy 123.19 72.39) (xy 132.08 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2608,7 +2628,7 @@
 	)
 	(wire
 		(pts
-			(xy 132.08 80.01) (xy 132.08 83.82)
+			(xy 177.8 80.01) (xy 177.8 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2678,7 +2698,7 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 80.01) (xy 123.19 83.82)
+			(xy 168.91 80.01) (xy 168.91 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2688,7 +2708,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 72.39) (xy 149.86 72.39)
+			(xy 186.69 72.39) (xy 195.58 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2745,6 +2765,16 @@
 			(type default)
 		)
 		(uuid "8f913b7c-76ab-45d4-aff9-5e389359dcd5")
+	)
+	(wire
+		(pts
+			(xy 123.19 63.5) (xy 123.19 72.39)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95de8036-ca6f-4b37-aeaa-dee048d77c6c")
 	)
 	(wire
 		(pts
@@ -2818,7 +2848,7 @@
 	)
 	(wire
 		(pts
-			(xy 194.31 80.01) (xy 194.31 83.82)
+			(xy 140.97 80.01) (xy 140.97 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2848,7 +2878,7 @@
 	)
 	(wire
 		(pts
-			(xy 123.19 63.5) (xy 123.19 72.39)
+			(xy 168.91 63.5) (xy 168.91 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2858,7 +2888,7 @@
 	)
 	(wire
 		(pts
-			(xy 167.64 80.01) (xy 167.64 83.82)
+			(xy 213.36 80.01) (xy 213.36 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2908,7 +2938,7 @@
 	)
 	(wire
 		(pts
-			(xy 140.97 80.01) (xy 140.97 83.82)
+			(xy 186.69 80.01) (xy 186.69 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2928,7 +2958,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 80.01) (xy 149.86 83.82)
+			(xy 195.58 80.01) (xy 195.58 83.82)
 		)
 		(stroke
 			(width 0)
@@ -2948,7 +2978,7 @@
 	)
 	(wire
 		(pts
-			(xy 203.2 80.01) (xy 203.2 83.82)
+			(xy 149.86 80.01) (xy 149.86 83.82)
 		)
 		(stroke
 			(width 0)
@@ -3008,7 +3038,7 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 80.01) (xy 185.42 83.82)
+			(xy 132.08 80.01) (xy 132.08 83.82)
 		)
 		(stroke
 			(width 0)
@@ -3028,17 +3058,7 @@
 	)
 	(wire
 		(pts
-			(xy 176.53 63.5) (xy 176.53 72.39)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ef25a867-be66-4a9f-84d2-ff3cfc882d0e")
-	)
-	(wire
-		(pts
-			(xy 132.08 72.39) (xy 140.97 72.39)
+			(xy 177.8 72.39) (xy 186.69 72.39)
 		)
 		(stroke
 			(width 0)
@@ -3048,7 +3068,7 @@
 	)
 	(wire
 		(pts
-			(xy 149.86 72.39) (xy 158.75 72.39)
+			(xy 195.58 72.39) (xy 204.47 72.39)
 		)
 		(stroke
 			(width 0)
@@ -3057,7 +3077,7 @@
 		(uuid "f9cecc5e-8427-4a3a-8172-0366c7b5d1bd")
 	)
 	(label "PC5"
-		(at 167.64 83.82 0)
+		(at 213.36 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3067,7 +3087,7 @@
 		(uuid "03129911-8f05-41f2-851a-7b49652f3d2a")
 	)
 	(label "PC3"
-		(at 149.86 83.82 0)
+		(at 195.58 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3077,7 +3097,7 @@
 		(uuid "0460d2f6-009f-464a-8067-48daa4eea51e")
 	)
 	(label "PC4"
-		(at 158.75 83.82 0)
+		(at 204.47 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3177,7 +3197,7 @@
 		(uuid "4ca83a82-a689-49f9-bdaf-216c1fc2587e")
 	)
 	(label "PC0"
-		(at 123.19 83.82 0)
+		(at 168.91 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3257,7 +3277,7 @@
 		(uuid "71b66470-c667-4139-899b-5fd180d243ee")
 	)
 	(label "PD3"
-		(at 176.53 83.82 0)
+		(at 123.19 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3277,7 +3297,7 @@
 		(uuid "79dd9a83-1dcb-43aa-95f6-2a00c648f752")
 	)
 	(label "PC1"
-		(at 132.08 83.82 0)
+		(at 177.8 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3297,7 +3317,7 @@
 		(uuid "841f2bb7-e2e4-4abb-b3a8-47892a528010")
 	)
 	(label "PD6"
-		(at 203.2 83.82 0)
+		(at 149.86 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3316,8 +3336,8 @@
 		)
 		(uuid "8890fc70-3883-4f1f-ae9d-8c712f9bb529")
 	)
-	(label "OC1A"
-		(at 123.19 63.5 0)
+	(label "OC1B"
+		(at 168.91 63.5 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3336,8 +3356,8 @@
 		)
 		(uuid "8b0d1320-caaa-47fe-be6d-34000a24483f")
 	)
-	(label "OC1B"
-		(at 176.53 63.5 0)
+	(label "OC1A"
+		(at 123.19 63.5 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3357,7 +3377,7 @@
 		(uuid "9ae5f637-5b9c-4589-a7b3-71c9e0e24dd8")
 	)
 	(label "PD7"
-		(at 213.36 83.82 0)
+		(at 160.02 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3437,7 +3457,7 @@
 		(uuid "d71b4adb-a2e9-4c57-b363-5da49ec6c071")
 	)
 	(label "PD5"
-		(at 194.31 83.82 0)
+		(at 140.97 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3447,7 +3467,7 @@
 		(uuid "dac19341-1a66-4e03-bb01-b80ef84710ee")
 	)
 	(label "PC2"
-		(at 140.97 83.82 0)
+		(at 186.69 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3497,7 +3517,7 @@
 		(uuid "f19acb8c-958a-4135-b453-e1d514577505")
 	)
 	(label "PD4"
-		(at 185.42 83.82 0)
+		(at 132.08 83.82 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3518,7 +3538,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 140.97 76.2 270)
+		(at 186.69 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3526,8 +3546,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "02ca0216-4078-4a59-ac3e-4e2712e20cc7")
-		(property "Reference" "D3"
-			(at 143.51 73.3424 90)
+		(property "Reference" "D8"
+			(at 189.23 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3536,7 +3556,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 143.51 75.8824 90)
+			(at 189.23 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3545,7 +3565,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 140.97 76.2 0)
+			(at 186.69 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3554,7 +3574,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 140.97 76.2 0)
+			(at 186.69 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3563,7 +3583,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 140.97 76.2 0)
+			(at 186.69 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3572,7 +3592,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 140.97 76.2 0)
+			(at 186.69 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3589,7 +3609,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D3")
+					(reference "D8")
 					(unit 1)
 				)
 			)
@@ -3817,7 +3837,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 123.19 76.2 270)
+		(at 168.91 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3825,8 +3845,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3c28e89d-0829-4ace-a528-c55f0881f681")
-		(property "Reference" "D1"
-			(at 125.73 73.3424 90)
+		(property "Reference" "D6"
+			(at 171.45 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3835,7 +3855,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 125.73 75.8824 90)
+			(at 171.45 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3844,7 +3864,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 123.19 76.2 0)
+			(at 168.91 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3853,7 +3873,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 123.19 76.2 0)
+			(at 168.91 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3862,7 +3882,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 123.19 76.2 0)
+			(at 168.91 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3871,7 +3891,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 123.19 76.2 0)
+			(at 168.91 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3888,7 +3908,7 @@
 		(instances
 			(project ""
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D1")
+					(reference "D6")
 					(unit 1)
 				)
 			)
@@ -3896,7 +3916,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 203.2 76.2 270)
+		(at 149.86 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -3904,8 +3924,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "3cdff519-0b11-4d52-bc67-39fd5cfc3f74")
-		(property "Reference" "D10"
-			(at 205.74 73.3424 90)
+		(property "Reference" "D4"
+			(at 152.4 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3914,7 +3934,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 205.74 75.8824 90)
+			(at 152.4 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3923,7 +3943,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 203.2 76.2 0)
+			(at 149.86 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3932,7 +3952,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 203.2 76.2 0)
+			(at 149.86 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3941,7 +3961,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 203.2 76.2 0)
+			(at 149.86 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3950,7 +3970,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 203.2 76.2 0)
+			(at 149.86 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3967,7 +3987,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D10")
+					(reference "D4")
 					(unit 1)
 				)
 			)
@@ -4176,7 +4196,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 176.53 76.2 270)
+		(at 123.19 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4184,8 +4204,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "56db595c-ef87-4cec-9581-5bc54c923b29")
-		(property "Reference" "D7"
-			(at 179.07 73.3424 90)
+		(property "Reference" "D1"
+			(at 125.73 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4194,7 +4214,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 179.07 75.8824 90)
+			(at 125.73 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4203,7 +4223,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 176.53 76.2 0)
+			(at 123.19 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4212,7 +4232,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 176.53 76.2 0)
+			(at 123.19 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4221,7 +4241,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 176.53 76.2 0)
+			(at 123.19 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4230,7 +4250,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 176.53 76.2 0)
+			(at 123.19 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4247,7 +4267,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D7")
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -4468,7 +4488,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 158.75 76.2 270)
+		(at 204.47 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4476,8 +4496,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "8339a53d-cc35-400d-9f54-04ddbf82588e")
-		(property "Reference" "D5"
-			(at 161.29 73.3424 90)
+		(property "Reference" "D10"
+			(at 207.01 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4486,7 +4506,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 161.29 75.8824 90)
+			(at 207.01 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4495,7 +4515,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 158.75 76.2 0)
+			(at 204.47 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4504,7 +4524,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 158.75 76.2 0)
+			(at 204.47 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4513,7 +4533,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 158.75 76.2 0)
+			(at 204.47 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4522,7 +4542,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 158.75 76.2 0)
+			(at 204.47 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4539,7 +4559,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D5")
+					(reference "D10")
 					(unit 1)
 				)
 			)
@@ -4823,7 +4843,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 149.86 76.2 270)
+		(at 195.58 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4831,8 +4851,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a6078172-961f-441a-9a1e-510e62cba0b1")
-		(property "Reference" "D4"
-			(at 152.4 73.3424 90)
+		(property "Reference" "D9"
+			(at 198.12 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4841,7 +4861,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 152.4 75.8824 90)
+			(at 198.12 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4850,7 +4870,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 149.86 76.2 0)
+			(at 195.58 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4859,7 +4879,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 149.86 76.2 0)
+			(at 195.58 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4868,7 +4888,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 149.86 76.2 0)
+			(at 195.58 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4877,7 +4897,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 149.86 76.2 0)
+			(at 195.58 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4894,7 +4914,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D4")
+					(reference "D9")
 					(unit 1)
 				)
 			)
@@ -4972,7 +4992,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 194.31 76.2 270)
+		(at 140.97 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -4980,8 +5000,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "bda30cc5-738a-4717-b069-c1024a3155c3")
-		(property "Reference" "D9"
-			(at 196.85 73.3424 90)
+		(property "Reference" "D3"
+			(at 143.51 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4990,7 +5010,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 196.85 75.8824 90)
+			(at 143.51 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -4999,7 +5019,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 194.31 76.2 0)
+			(at 140.97 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5008,7 +5028,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 194.31 76.2 0)
+			(at 140.97 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5017,7 +5037,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 194.31 76.2 0)
+			(at 140.97 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5026,7 +5046,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 194.31 76.2 0)
+			(at 140.97 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5043,7 +5063,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D9")
+					(reference "D3")
 					(unit 1)
 				)
 			)
@@ -5051,7 +5071,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 213.36 76.2 270)
+		(at 160.02 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5059,8 +5079,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d034d43f-b3d4-483a-86ba-fe12d04f47c3")
-		(property "Reference" "D11"
-			(at 215.9 73.3424 90)
+		(property "Reference" "D5"
+			(at 162.56 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5069,7 +5089,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 215.9 75.8824 90)
+			(at 162.56 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5078,7 +5098,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 213.36 76.2 0)
+			(at 160.02 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5087,7 +5107,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 213.36 76.2 0)
+			(at 160.02 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5096,7 +5116,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 213.36 76.2 0)
+			(at 160.02 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5105,7 +5125,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 213.36 76.2 0)
+			(at 160.02 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5122,7 +5142,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D11")
+					(reference "D5")
 					(unit 1)
 				)
 			)
@@ -5130,7 +5150,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 185.42 76.2 270)
+		(at 132.08 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5138,8 +5158,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "d113c541-9fa8-4a5a-8735-c6a834bab379")
-		(property "Reference" "D8"
-			(at 187.96 73.3424 90)
+		(property "Reference" "D2"
+			(at 134.62 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5148,7 +5168,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 187.96 75.8824 90)
+			(at 134.62 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5157,7 +5177,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 185.42 76.2 0)
+			(at 132.08 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5166,7 +5186,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 185.42 76.2 0)
+			(at 132.08 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5175,7 +5195,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 185.42 76.2 0)
+			(at 132.08 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5184,7 +5204,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 185.42 76.2 0)
+			(at 132.08 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5201,7 +5221,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D8")
+					(reference "D2")
 					(unit 1)
 				)
 			)
@@ -5275,7 +5295,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 132.08 76.2 270)
+		(at 177.8 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5283,8 +5303,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e0942247-963a-4404-bb95-f711d7b35b5e")
-		(property "Reference" "D2"
-			(at 134.62 73.3424 90)
+		(property "Reference" "D7"
+			(at 180.34 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5293,7 +5313,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 134.62 75.8824 90)
+			(at 180.34 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5302,7 +5322,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 132.08 76.2 0)
+			(at 177.8 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5311,7 +5331,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 132.08 76.2 0)
+			(at 177.8 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5320,7 +5340,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 132.08 76.2 0)
+			(at 177.8 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5329,7 +5349,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 132.08 76.2 0)
+			(at 177.8 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5346,7 +5366,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D2")
+					(reference "D7")
 					(unit 1)
 				)
 			)
@@ -5354,7 +5374,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 167.64 76.2 270)
+		(at 213.36 76.2 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5362,8 +5382,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "ee6f7d94-c7cf-4402-837e-1abb8fcb5f81")
-		(property "Reference" "D6"
-			(at 170.18 73.3424 90)
+		(property "Reference" "D11"
+			(at 215.9 73.3424 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5372,7 +5392,7 @@
 			)
 		)
 		(property "Value" "LED"
-			(at 170.18 75.8824 90)
+			(at 215.9 75.8824 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5381,7 +5401,7 @@
 			)
 		)
 		(property "Footprint" "LED_THT:LED_D3.0mm"
-			(at 167.64 76.2 0)
+			(at 213.36 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5390,7 +5410,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 167.64 76.2 0)
+			(at 213.36 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5399,7 +5419,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 167.64 76.2 0)
+			(at 213.36 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5408,7 +5428,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 167.64 76.2 0)
+			(at 213.36 76.2 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5425,7 +5445,7 @@
 		(instances
 			(project "binaryclock"
 				(path "/d8fcd0c6-86f1-4923-a60d-4a4d3fff728a"
-					(reference "D6")
+					(reference "D11")
 					(unit 1)
 				)
 			)
