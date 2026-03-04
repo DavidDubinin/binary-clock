@@ -504,7 +504,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "../fabrication-outputs/",
+      "plot": "C:/Users/david/Documents/PlatformIO/Projects/binaryclock/binaryclock-kicad/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "../../../../../Downloads/binaryclock.step",
@@ -641,7 +641,7 @@
       "workbook_filename": ""
     },
     "page_layout_descr_file": "",
-    "plot_directory": "C:/Users/david/Downloads/",
+    "plot_directory": "C:/Users/david/Documents/PlatformIO/Projects/binaryclock/binaryclock-kicad/",
     "space_save_all_events": true,
     "spice_current_sheet_as_root": false,
     "spice_external_command": "spice \"%I\"",
