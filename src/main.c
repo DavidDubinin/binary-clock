@@ -1,12 +1,13 @@
 #define F_CPU 1000000UL
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
 
 
 #define DUTY_CYCLE 1 // in %
-#define hour 15
-#define minute 33
-#define sec 10
+#define hour 20
+#define minute 31
+#define sec 30
 
 volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
 
@@ -18,7 +19,8 @@ void setLeds(uint32_t time) {
   PORTC = __builtin_avr_insert_bits(0xFF012345, minutes, PORTC); //portc 5 bis 0 minuten
 } 
 
-void incrementTime(void) { //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0 
+//time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
+void incrementTime(void) { 
   time = (time + 1) % 86400;
 
   //update disp
@@ -27,10 +29,16 @@ void incrementTime(void) { //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
   }
 }
 
+void initPins(void) {
+  DDRB |= (1 << DDB1) | (1 << DDB2); // OC1A/PB1 bzw OC1B/PB2 auf Output für Stunden/Minuten
+  DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
+  DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit
+}
+
+// Set OC1A/OC1B on Compare Match, clear OC1A/OC1B at TOP 
+// ; Fast PWM, 10-bit, TOP = 0x03FF, Update of OCR1x at TOP, TOV1 Flag set on TOP
+// CS: clkI/O/1 (No prescaling) 
 void initPwm(void) {
-  // Set OC1A/OC1B on Compare Match, clear OC1A/OC1B at TOP 
-  // ; Fast PWM, 10-bit, TOP = 0x03FF, Update of OCR1x at TOP, TOV1 Flag set on TOP
-  // CS: clkI/O/1 (No prescaling) 
   TCCR1A |= (1 << WGM10) | (1 << WGM11) | (1 << COM1A1) 
          | (1 << COM1B1) | (1 << COM1A0) | (1 << COM1B0);
          
@@ -42,35 +50,64 @@ void initPwm(void) {
   
 }
 
+//Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
+//Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
 void initQuartz(void){
+  //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
+  TIMSK2 = 0x00;
 
-}
+  //2. Select clock source by setting AS2 as appropriate
+  //Enable Asynchronous Timer/Counter2
+  ASSR |= (1 << AS2);
 
-void initPins(void) {
-  DDRB |= (1 << DDB1) | (1 << DDB2); // OC1A/PB1 bzw OC1B/PB2 auf Output für Stunden/Minuten
-  DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
-  DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit
-}
+  //3. Write new values to TCNT2, OCR2x, and TCCR2x.
+  //Toggle OC2A on Compare Match
 
-void testLeds(void){
-  PORTD |= (1 << PORTD3) | (1 << PORTD4) | (1 << PORTD5) | (1 << PORTD6) | (1 << PORTD7); // Stunden
-  PORTC |= (1 << PORTC0) | (1 << PORTC1) | (1 << PORTC2) | (1 << PORTC3) | (1 << PORTC4) | (1 << PORTC5); // Minuten
-}
+  TCNT2 = 0x00; //reset timer
+  TCCR2A |= (1 << COM2A0);
+  TCCR2A &= ~(1 << COM2A1);
 
-void shittyTestLoop(void){
-  setLeds(time);
-  while(1){
-    _delay_ms(1000);
-    incrementTime();
+  //CTC-Mode
+  TCCR2A |= (1 << WGM21);
+  TCCR2A &= ~(1 << WGM20);
+  TCCR2B &= ~(1 << WGM22);
+  
+  //CS selection mit Prescaler = 128
+  TCCR2B |= (1 << CS20) | (1 << CS22);
+  TCCR2B &= ~(1 << CS21);
+
+  //Compare Match bei Timer = 255 => OC2A Interrupt Flag Set
+  OCR2A = 0xFF;
+
+  //4. To switch to asynchronous operation: Wait for TCN2xUB, OCR2xUB, and TCR2xUB
+  //ASSR = xxx1 1111 BAD
+  //ASSR = xxx0 0000
+  while(ASSR & ( (1<<TCN2UB) | (1<<OCR2AUB) | (1<<OCR2BUB) | (1<<TCR2AUB) | (1<<TCR2BUB))){
+    __builtin_avr_nop(); // sigma approved!!!
   }
+
+  //5. Clear the Timer/Counter2 Interrupt Flags
+  TIFR2 = 0x00;
+
+  //6. Enable interrupts, if needed
+  //Enable Output Compare Match Interrupt A
+  TIMSK2 |= (1 << OCIE2A);
 }
 
 int main(void){
   initPins();
   initPwm();
-  //testLeds();
+  initQuartz();
+  sei();
+  
+  setLeds(time);
 
-  shittyTestLoop();
-
+  while(1){
+    __builtin_avr_nop();
+  }
   return 0;
+}
+
+ISR(TIMER2_COMPA_vect){
+  incrementTime();
 }

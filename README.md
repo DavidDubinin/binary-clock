@@ -2,6 +2,8 @@
 
 
 ![schematic](./binaryclock-kicad/binaryclock.svg)
+![pcb](./binaryclock-kicad/pcb.png)
+![pcb_render](./binaryclock-kicad/binaryclock.png)
 
 
 
@@ -25,8 +27,6 @@ vorgeben an der Sie live eine Aufgabe lösen werden.
 ATmega.
 
 
-
-=> uhrenquarz action
 => steuerung + sleepmode
 => debug interface
 => hwp labor action
