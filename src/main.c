@@ -54,7 +54,7 @@ void initPwm(void) {
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
 void initQuartz(void){
   //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
-  TIMSK2 = 0x00;
+  TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
 
   //2. Select clock source by setting AS2 as appropriate
   //Enable Asynchronous Timer/Counter2
@@ -87,7 +87,7 @@ void initQuartz(void){
   }
 
   //5. Clear the Timer/Counter2 Interrupt Flags
-  TIFR2 = 0x00;
+  TIFR2 |= (1 << OCF2B) | (1 << OCF2A) | (1 << TOV2);
 
   //6. Enable interrupts, if needed
   //Enable Output Compare Match Interrupt A
