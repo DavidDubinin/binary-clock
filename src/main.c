@@ -18,7 +18,7 @@ void setLeds(uint32_t time) {
   PORTC = __builtin_avr_insert_bits(0xFF012345, minutes, PORTC); //portc 5 bis 0 minuten
 } 
 
-void incrementTime() { //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0 
+void incrementTime(void) { //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0 
   time = (time + 1) % 86400;
 
   //update disp
@@ -42,18 +42,22 @@ void initPwm(void) {
   
 }
 
+void initQuartz(void){
+
+}
+
 void initPins(void) {
   DDRB |= (1 << DDB1) | (1 << DDB2); // OC1A/PB1 bzw OC1B/PB2 auf Output für Stunden/Minuten
   DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
   DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit
 }
 
-void testLeds(){
+void testLeds(void){
   PORTD |= (1 << PORTD3) | (1 << PORTD4) | (1 << PORTD5) | (1 << PORTD6) | (1 << PORTD7); // Stunden
   PORTC |= (1 << PORTC0) | (1 << PORTC1) | (1 << PORTC2) | (1 << PORTC3) | (1 << PORTC4) | (1 << PORTC5); // Minuten
 }
 
-void shittyTestLoop(){
+void shittyTestLoop(void){
   setLeds(time);
   while(1){
     _delay_ms(1000);
