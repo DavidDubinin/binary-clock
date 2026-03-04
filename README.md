@@ -26,7 +26,7 @@ ATmega.
 
 
 
-=> led control beenden + uhrenquarz action
+=> uhrenquarz action
 => steuerung + sleepmode
 => debug interface
 => hwp labor action

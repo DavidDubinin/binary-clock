@@ -1,20 +1,21 @@
+#define F_CPU 1000000UL
 #include <avr/io.h>
 #include <util/delay.h>
 
 
-#define DUTY_CYCLE 5.0 // in %
+#define DUTY_CYCLE 1 // in %
+#define hour 15
+#define minute 33
+#define sec 10
 
+volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
 
-volatile uint32_t time = 0; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
-
-
-void setLeds(uint32_t time) { //aus time müssen sekunden rausgerechnet werden, bzw. wir müssen nur die ersten 11 bit nehmen => erste 5 bit für stunden => rest für minuten BEIDES UMGEKEHRT
-  uint8_t hours = (time & 0xF8000000) >> 27;  //0b 1111 1000 ....
-  uint8_t minutes = (time & 0x07E00000) >> 21; //0b 0000 0111 1110 ....
+void setLeds(uint32_t time) { 
+  uint8_t hours = time / (3600); // 000_0 1101 Stunden
+  uint8_t minutes = (time % (3600)) / 60; // 00_00 1110 Minuten
   //^need to be reversed
-
-  PORTD = __builtin_avr_insert_bits(0x01234567, hours, 0); // Stunden 0001 1111 müssen reversed portd 7 bis 3  
-  PORTC = __builtin_avr_insert_bits(0x01234567, minutes, 0); // Minuten 0011 1111 müssen reversed, portc 5 bis 0
+  PORTD = __builtin_avr_insert_bits(0x01234FFF, hours, PORTD); // portd 7 bis 3  stunden
+  PORTC = __builtin_avr_insert_bits(0xFF012345, minutes, PORTC); //portc 5 bis 0 minuten
 } 
 
 void incrementTime() { //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0 
@@ -36,8 +37,8 @@ void initPwm(void) {
   TCCR1B |= (1 << WGM12) | (1 << CS10);
   TCCR1B &= ~(1 << WGM13) & ~(1 << CS11) & ~(1 << CS12);
 
-  OCR1A = round(DUTY_CYCLE/100.0*1023.0);
-  OCR1B = round(DUTY_CYCLE/100.0*1023.0);
+  OCR1A = DUTY_CYCLE*1023/100;
+  OCR1B = DUTY_CYCLE*1023/100;
   
 }
 
@@ -53,8 +54,9 @@ void testLeds(){
 }
 
 void shittyTestLoop(){
+  setLeds(time);
   while(1){
-    _delay_ms(1);
+    _delay_ms(1000);
     incrementTime();
   }
 }
@@ -62,7 +64,7 @@ void shittyTestLoop(){
 int main(void){
   initPins();
   initPwm();
-  testLeds();
+  //testLeds();
 
   shittyTestLoop();
 
