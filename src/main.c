@@ -5,19 +5,44 @@
 
 
 #define DUTY_CYCLE 1 // in %
-#define hour 20
-#define minute 31
-#define sec 30
+#define hour 15
+#define minute 49
+#define sec 50
 
 volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
 
-void setLeds(uint32_t time) { 
-  uint8_t hours = time / (3600); // 000_0 1101 Stunden
-  uint8_t minutes = (time % (3600)) / 60; // 00_00 1110 Minuten
+typedef enum {
+  INIT,
+  RUNNING,
+  DISP,
+  SET,
+  DBG
+} State;
+
+typedef struct {
+  uint8_t hours;
+  uint8_t minutes;
+  uint8_t seconds;
+} Time;
+
+volatile State state = INIT;
+
+Time calcTime(){
+  Time timeStruct;
+  
+  timeStruct.hours = time / (3600); // 000_0 1101 Stunden
+  timeStruct.minutes = (time % (3600)) / 60; // 00_00 1110 Minuten
+  timeStruct.seconds = time % 60;  //0000
+  return timeStruct;
+}
+
+void setLeds(Time timeStruct) { 
   //^need to be reversed
-  PORTD = __builtin_avr_insert_bits(0x01234FFF, hours, PORTD); // portd 7 bis 3  stunden
-  PORTC = __builtin_avr_insert_bits(0xFF012345, minutes, PORTC); //portc 5 bis 0 minuten
-} 
+  PORTD = __builtin_avr_insert_bits(0x01234FFF, timeStruct.hours, PORTD); // portd 7 bis 3  stunden
+  PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.minutes, PORTC); //portc 5 bis 0 minuten
+}
+
+
 
 //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
 void incrementTime(void) { 
@@ -25,11 +50,15 @@ void incrementTime(void) {
 
   //update disp
   if(time % 60 == 0){
-    setLeds(time);
+    setLeds(calcTime(time));
   }
 }
 
-void initPins(void) {
+uint8_t debounce(){
+  return 1;
+}
+
+void initLeds(void) {
   DDRB |= (1 << DDB1) | (1 << DDB2); // OC1A/PB1 bzw OC1B/PB2 auf Output für Stunden/Minuten
   DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
   DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit
@@ -82,7 +111,7 @@ void initQuartz(void){
   //4. To switch to asynchronous operation: Wait for TCN2xUB, OCR2xUB, and TCR2xUB
   //ASSR = xxx1 1111 BAD
   //ASSR = xxx0 0000
-  while(ASSR & ( (1<<TCN2UB) | (1<<OCR2AUB) | (1<<OCR2BUB) | (1<<TCR2AUB) | (1<<TCR2BUB))){
+  while(ASSR & ((1<<TCN2UB) | (1<<OCR2AUB) | (1<<OCR2BUB) | (1<<TCR2AUB) | (1<<TCR2BUB))){
     __builtin_avr_nop(); // sigma approved!!!
   }
 
@@ -94,20 +123,82 @@ void initQuartz(void){
   TIMSK2 |= (1 << OCIE2A);
 }
 
-int main(void){
-  initPins();
+void initButtons(void) {
+  //set Button pins as inputs
+  DDRD &= ~(1 << PD2);
+  DDRB &= ~(1 << PB3) & ~(1 << PB4);
+  //enable internal pullups for Buttons
+  PORTD |= (1 << PD2);
+  PORTB |= (1 << PB3) | (1 << PB4);
+
+  //set INT0 trigger to falling edge
+  EICRA |= (1 << ISC01);
+  EICRA &= ~(ISC00);
+  //Enable INT0
+  EIMSK |= (1 << INT0);
+
+  //Enable PCINT7..0 interrupt und Maske for PCINT3..4
+  PCICR |= (1 << PCIE0);
+  PCMSK0 |= (1 << PCINT3) | (1 << PCINT4);
+}
+
+void init(void) {
+  initLeds();
+  initButtons();
   initPwm();
   initQuartz();
+  setLeds(calcTime(time));
   sei();
-  
-  setLeds(time);
+}
 
+int main(void){
   while(1){
-    __builtin_avr_nop();
+    switch (state){
+
+    case INIT:
+      init();
+      state = RUNNING;
+      break;
+
+    case RUNNING:
+      break;
+
+    case DISP:
+      state = RUNNING;
+      break;
+
+    case SET:
+      state = RUNNING;
+      break;
+
+    case DBG:
+      state = RUNNING;
+      break;
+
+    default:
+      cli();
+      return 0;
+    }
   }
-  return 0;
 }
 
 ISR(TIMER2_COMPA_vect){
   incrementTime();
+}
+
+//Button DISP
+ISR(INT0_vect){
+  if(debounce()){state = DISP;}
+}
+
+//Buttons SET und DBG
+ISR(PCINT0_vect){
+  //SET-Button
+  if(!(PINB & (1<<PB3))){
+    if(debounce()){state = SET;}
+  }
+  //DBG-Button
+  if(!(PINB & (1<<PB4))){
+    if(debounce()){state = DBG;}
+  }
 }
