@@ -8,10 +8,11 @@
 #define DUTY_CYCLE 1 // in %
 
 #define hour 17
-#define minute 10
-#define sec 45
+#define minute 59
+#define sec 25
 
 volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
+volatile uint8_t minutesMode = 1;
 
 volatile uint8_t debounce[BUTTON_COUNT] = {[0 ... BUTTON_COUNT-1] = DEBOUNCE_TIME}; //array {100,100,100}
 
@@ -41,18 +42,19 @@ Time calcTime(void){
   return timeStruct;
 }
 
-void setLeds(Time timeStruct) { 
+void setLeds(Time timeStruct) {
   //^need to be reversed
   PORTD = __builtin_avr_insert_bits(0x01234FFF, timeStruct.hours, PORTD); // portd 7 bis 3  stunden
-  PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.minutes, PORTC); //portc 5 bis 0 minuten
+  if (minutesMode) PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.minutes, PORTC); //portc 5 bis 0 minuten
+  else PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.seconds, PORTC); //portc 5 bis 0 Sekunden
 }
 
 //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
 void incrementTime(void) { 
   time = (time + 1) % 86400;
 
-  //update disp
-  if(time % 60 == 0){
+  //update disp jede Minute wenn in Minutenmodus oder jede Sekunde wenn nicht
+  if(!minutesMode || time % 60 == 0){
     setLeds(calcTime());
   }
 }
@@ -168,14 +170,14 @@ int main(void){
       break;
 
     case DISP:
-      PORTC = __builtin_avr_insert_bits(0xFF012345, 0b101010, PORTC);
+      minutesMode = !minutesMode;
+      setLeds(calcTime());
 
       state = RUNNING;
       break;
 
     case SET:
       PORTC = __builtin_avr_insert_bits(0xFF012345, 0b111111, PORTC);
-
       state = RUNNING;
       break;
 
