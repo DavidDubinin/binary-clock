@@ -3,13 +3,18 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-
+#define DEBOUNCE_TIME 100
+#define BUTTON_COUNT 3
 #define DUTY_CYCLE 1 // in %
-#define hour 15
-#define minute 49
-#define sec 50
+
+#define hour 17
+#define minute 10
+#define sec 45
 
 volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
+
+volatile uint8_t debounce[BUTTON_COUNT] = {[0 ... BUTTON_COUNT-1] = DEBOUNCE_TIME}; //array {100,100,100}
+
 
 typedef enum {
   INIT,
@@ -27,7 +32,7 @@ typedef struct {
 
 volatile State state = INIT;
 
-Time calcTime(){
+Time calcTime(void){
   Time timeStruct;
   
   timeStruct.hours = time / (3600); // 000_0 1101 Stunden
@@ -42,20 +47,14 @@ void setLeds(Time timeStruct) {
   PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.minutes, PORTC); //portc 5 bis 0 minuten
 }
 
-
-
 //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
 void incrementTime(void) { 
   time = (time + 1) % 86400;
 
   //update disp
   if(time % 60 == 0){
-    setLeds(calcTime(time));
+    setLeds(calcTime());
   }
-}
-
-uint8_t debounce(){
-  return 1;
 }
 
 void initLeds(void) {
@@ -133,7 +132,7 @@ void initButtons(void) {
 
   //set INT0 trigger to falling edge
   EICRA |= (1 << ISC01);
-  EICRA &= ~(ISC00);
+  EICRA &= ~(1 << ISC00);
   //Enable INT0
   EIMSK |= (1 << INT0);
 
@@ -147,31 +146,42 @@ void init(void) {
   initButtons();
   initPwm();
   initQuartz();
-  setLeds(calcTime(time));
+  setLeds(calcTime());
   sei();
 }
 
 int main(void){
   while(1){
     switch (state){
-
     case INIT:
       init();
+
       state = RUNNING;
       break;
 
     case RUNNING:
+      if(debounce[0]) debounce[0] -= 1;
+      if(debounce[1]) debounce[1] -= 1;
+      if(debounce[2]) debounce[2] -= 1;
+      _delay_ms(1);
+
       break;
 
     case DISP:
+      PORTC = __builtin_avr_insert_bits(0xFF012345, 0b101010, PORTC);
+
       state = RUNNING;
       break;
 
     case SET:
+      PORTC = __builtin_avr_insert_bits(0xFF012345, 0b111111, PORTC);
+
       state = RUNNING;
       break;
 
     case DBG:
+      PORTC = __builtin_avr_insert_bits(0xFF012345, 0b000111, PORTC);
+
       state = RUNNING;
       break;
 
@@ -188,17 +198,17 @@ ISR(TIMER2_COMPA_vect){
 
 //Button DISP
 ISR(INT0_vect){
-  if(debounce()){state = DISP;}
+  if(debounce[0] == 0){state = DISP; debounce[0] = DEBOUNCE_TIME;}
 }
 
 //Buttons SET und DBG
 ISR(PCINT0_vect){
   //SET-Button
   if(!(PINB & (1<<PB3))){
-    if(debounce()){state = SET;}
+    if(debounce[1] == 0){state = SET; debounce[1] = DEBOUNCE_TIME;}
   }
   //DBG-Button
   if(!(PINB & (1<<PB4))){
-    if(debounce()){state = DBG;}
+    if((debounce[2] == 0)){state = DBG; debounce[2] = DEBOUNCE_TIME;}
   }
 }
