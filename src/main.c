@@ -105,9 +105,6 @@ void initPwm(void) {
 
 //Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
-
-//Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 500 Hz (1 interrupt each ms) => OCRnx = 255  
-//Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
 void initQuartz(void){
   //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
   TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
@@ -159,8 +156,8 @@ void initButtons(void) {
   PORTB |= (1 << PB3) | (1 << PB4);
 
   //set INT0 trigger to falling edge
-  EICRA |= (1 << ISC00);
-  EICRA &= ~(1 << ISC01);
+  EICRA |= (1 << ISC01);
+  EICRA &= ~(1 << ISC00);
   //Enable INT0
   EIMSK |= (1 << INT0);
 
