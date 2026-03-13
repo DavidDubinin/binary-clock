@@ -3,7 +3,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-#define DEBOUNCE_TIME 100
+#define DEBOUNCE_TIME 100 //in ms
 #define BUTTON_COUNT 3
 #define DUTY_CYCLE 1 // in %
 
@@ -13,9 +13,7 @@
 
 volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
 volatile uint8_t minutesMode = 1;
-
 volatile uint8_t debounce[BUTTON_COUNT] = {[0 ... BUTTON_COUNT-1] = DEBOUNCE_TIME}; //array {100,100,100}
-
 
 typedef enum {
   INIT,
@@ -25,6 +23,12 @@ typedef enum {
   DBG
 } State;
 
+typedef enum {
+  OFF,
+  HOURS,
+  MINUTES
+} SetupMode;
+
 typedef struct {
   uint8_t hours;
   uint8_t minutes;
@@ -32,6 +36,7 @@ typedef struct {
 } Time;
 
 volatile State state = INIT;
+volatile SetupMode setupMode = OFF;
 
 Time calcTime(void){
   Time timeStruct;
@@ -47,6 +52,24 @@ void setLeds(Time timeStruct) {
   PORTD = __builtin_avr_insert_bits(0x01234FFF, timeStruct.hours, PORTD); // portd 7 bis 3  stunden
   if (minutesMode) PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.minutes, PORTC); //portc 5 bis 0 minuten
   else PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.seconds, PORTC); //portc 5 bis 0 Sekunden
+}
+
+void blinkendeStunden(void) {
+  while(1) {
+    PORTD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7);
+    _delay_ms(500);
+    PORTD &= ~(1 << PD3) & ~(1 << PD4) & ~(1 << PD5) & ~(1 << PD6) & ~(1 << PD7);
+    _delay_ms(500);
+  }
+}
+
+void blinkendeMinuten(void) {
+  while(1) {
+    PORTC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5);
+    _delay_ms(500);
+    PORTC &=  ~(1 << PC0) & ~(1 << PC1) & ~(1 << PC2) & ~(1 << PC3) & ~(1 << PC4) & ~(1 << PC5);
+    _delay_ms(500);
+  }
 }
 
 //time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
@@ -81,6 +104,9 @@ void initPwm(void) {
 }
 
 //Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
+//Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
+
+//Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 500 Hz (1 interrupt each ms) => OCRnx = 255  
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
 void initQuartz(void){
   //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
@@ -133,8 +159,8 @@ void initButtons(void) {
   PORTB |= (1 << PB3) | (1 << PB4);
 
   //set INT0 trigger to falling edge
-  EICRA |= (1 << ISC01);
-  EICRA &= ~(1 << ISC00);
+  EICRA |= (1 << ISC00);
+  EICRA &= ~(1 << ISC01);
   //Enable INT0
   EIMSK |= (1 << INT0);
 
@@ -165,25 +191,32 @@ int main(void){
       if(debounce[0]) debounce[0] -= 1;
       if(debounce[1]) debounce[1] -= 1;
       if(debounce[2]) debounce[2] -= 1;
-      _delay_ms(1);
 
+      _delay_ms(1);
       break;
 
     case DISP:
+    if(setupMode == OFF){
       minutesMode = !minutesMode;
       setLeds(calcTime());
-
+    }
+    else if(setupMode == HOURS){
+      setupMode = MINUTES;
+    }
+    else if(setupMode == MINUTES){
+      setupMode = OFF;
+    }
       state = RUNNING;
       break;
-
+      
     case SET:
-      PORTC = __builtin_avr_insert_bits(0xFF012345, 0b111111, PORTC);
+      if(setupMode == OFF){
+        setupMode = HOURS;
+      }
       state = RUNNING;
       break;
 
     case DBG:
-      PORTC = __builtin_avr_insert_bits(0xFF012345, 0b000111, PORTC);
-
       state = RUNNING;
       break;
 
