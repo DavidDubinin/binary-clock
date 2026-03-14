@@ -6,6 +6,7 @@
 #define DEBOUNCE_TIME 100 //in ms
 #define BUTTON_COUNT 3
 #define DUTY_CYCLE 1 // in %
+#define BLINK_TIMER 1000 //in ms (T)
 
 #define hour 17
 #define minute 59
@@ -14,6 +15,8 @@
 volatile uint32_t time = (uint32_t)hour*60*60 + minute*60 + sec; // unit 1s //0 bis 24*60*60 = 86 400 (86 399 -> 0)
 volatile uint8_t minutesMode = 1;
 volatile uint8_t debounce[BUTTON_COUNT] = {[0 ... BUTTON_COUNT-1] = DEBOUNCE_TIME}; //array {100,100,100}
+
+volatile uint16_t blinkTimer = BLINK_TIMER;
 
 typedef enum {
   INIT,
@@ -38,6 +41,7 @@ typedef struct {
 volatile State state = INIT;
 volatile SetupMode setupMode = OFF;
 
+
 Time calcTime(void){
   Time timeStruct;
   
@@ -54,21 +58,33 @@ void setLeds(Time timeStruct) {
   else PORTC = __builtin_avr_insert_bits(0xFF012345, timeStruct.seconds, PORTC); //portc 5 bis 0 Sekunden
 }
 
-void blinkendeStunden(void) {
-  while(1) {
-    PORTD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7);
-    _delay_ms(500);
-    PORTD &= ~(1 << PD3) & ~(1 << PD4) & ~(1 << PD5) & ~(1 << PD6) & ~(1 << PD7);
-    _delay_ms(500);
-  }
+void blinkendeMinuten(void){
+    if(blinkTimer > (BLINK_TIMER/2)) {
+      PORTC &=  ~(1 << PC0) & ~(1 << PC1) & ~(1 << PC2) & ~(1 << PC3) & ~(1 << PC4) & ~(1 << PC5);
+    }
+    else {
+      PORTC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5);
+    }
+    if(blinkTimer == 0) blinkTimer = BLINK_TIMER;
 }
 
-void blinkendeMinuten(void) {
-  while(1) {
-    PORTC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5);
-    _delay_ms(500);
-    PORTC &=  ~(1 << PC0) & ~(1 << PC1) & ~(1 << PC2) & ~(1 << PC3) & ~(1 << PC4) & ~(1 << PC5);
-    _delay_ms(500);
+void blinkendeStunden(void){
+    if(blinkTimer > (BLINK_TIMER/2)) {
+      PORTD &= ~(1 << PD3) & ~(1 << PD4) & ~(1 << PD5) & ~(1 << PD6) & ~(1 << PD7);
+    }
+    else {
+      PORTD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7);
+    }
+    if(blinkTimer == 0) blinkTimer = BLINK_TIMER;
+}
+
+void blinkendeLampen(void) {
+  if (setupMode == HOURS) {
+    blinkendeMinuten();
+    
+  }
+  else if(setupMode == MINUTES) {
+    blinkendeStunden();
   }
 }
 
@@ -185,13 +201,20 @@ int main(void){
       break;
 
     case RUNNING:
+      _delay_ms(1);
       if(debounce[0]) debounce[0] -= 1;
       if(debounce[1]) debounce[1] -= 1;
       if(debounce[2]) debounce[2] -= 1;
 
-      _delay_ms(1);
-      break;
+      
+      if(setupMode != OFF && blinkTimer != 0) {
+        blinkTimer -= 1;
+      }
 
+      blinkendeLampen();
+
+      break;
+      
     case DISP:
     if(setupMode == OFF){
       minutesMode = !minutesMode;
