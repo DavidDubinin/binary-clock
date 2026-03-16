@@ -3,23 +3,56 @@
 #include <avr/interrupt.h>
 
 volatile Time time;
+volatile TimeFlags timeFlags;
 volatile uint8_t minutesMode = 1;
 
-volatile uint8_t secondPassed = 0;
-volatile uint8_t minutePassed = 0;
-volatile uint8_t hourPassed = 0;
+static void updateSeconds(){
+    if (time.seconds == 59){
+        time.seconds = 0;
+        timeFlags.minutePassed = 1;
+    }
+    else{
+        time.seconds++;
+    }  
+}
 
-
-//time = 86 398 -> 86 399 ->  86 400 mod 86 400 => 0
-static void incrementTime(void){
-    time = (time + 1) % 86400;
-
-    //update disp jede Minute wenn in Minutenmodus oder jede Sekunde wenn nicht
-    if(!minutesMode || time % 60 == 0){
-    setLeds(calcTime());
+static void updateMinutes(){
+    if (time.minutes == 59){
+        time.minutes = 0;
+        timeFlags.hourPassed = 1;
+    }
+    else{
+        time.minutes++;
     }
 }
 
-ISR(TIMER2_COMPA_vect){
+static void updateHours(){
+    if (time.hours == 23){
+        time.hours = 0;
+    }
+    else{
+        time.hours++;
+    }
+}
+
+static void incrementTime(void){ 
+    if(timeFlags.secondPassed){
+        timeFlags.secondPassed = 0;
+        updateSeconds();
+        if(!minutesMode) setLeds(time.hours,time.seconds);
+    }
+    if(timeFlags.minutePassed){
+        timeFlags.minutePassed = 0;
+        updateMinutes();
+        if(minutesMode) setLeds(time.hours, time.minutes);
+    }
+    if(timeFlags.hourPassed){
+        timeFlags.hourPassed = 0;
+        updateHours();
+    }
+}
+
+ISR(TIMER2_COMPA_vect){ //called every second
+    timeFlags.secondPassed = 1;
     incrementTime();
 }

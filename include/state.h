@@ -5,8 +5,7 @@
 typedef enum {
   INIT,
   RUNNING,
-  DISP,
-  SET,
+  SETUPMODE,
   DBG
 } State;
 
