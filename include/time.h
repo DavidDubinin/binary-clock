@@ -19,6 +19,5 @@ typedef struct {
 
 extern volatile Time time;
 extern volatile TimeFlags timeFlags;
-extern volatile uint8_t minutesMode;
 
 #endif

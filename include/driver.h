@@ -33,7 +33,7 @@ void initQuartz(void);
 correctly assigns values to PORTD and PORTC, takes 5 bits and 6 bits respectively
 */
 void setLeds(uint8_t hourLedsVal, uint8_t minuteLedsVal);
-
+// Hier leuchten die LHS (Lichtaussendende Halbleiterbauelementeinheit mit elektroluminiszenter Strahlungsfunktion)
 
 
 #endif

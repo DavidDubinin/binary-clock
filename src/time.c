@@ -1,10 +1,11 @@
 #include "time.h"
+#include "driver.h"
+#include "state.h"
 
 #include <avr/interrupt.h>
 
 volatile Time time;
 volatile TimeFlags timeFlags;
-volatile uint8_t minutesMode = 1;
 
 static void updateSeconds(){
     if (time.seconds == 59){
@@ -39,12 +40,12 @@ static void incrementTime(void){
     if(timeFlags.secondPassed){
         timeFlags.secondPassed = 0;
         updateSeconds();
-        if(!minutesMode) setLeds(time.hours,time.seconds);
+        if(state == SHOW_SECONDS) setLeds(time.hours,time.seconds);
     }
     if(timeFlags.minutePassed){
         timeFlags.minutePassed = 0;
         updateMinutes();
-        if(minutesMode) setLeds(time.hours, time.minutes);
+        if(state == SHOW_MINUTES) setLeds(time.hours, time.minutes);
     }
     if(timeFlags.hourPassed){
         timeFlags.hourPassed = 0;
