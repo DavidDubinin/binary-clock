@@ -17,7 +17,10 @@ typedef struct {
   uint8_t secondPassed;
 } TimeFlags;
 
-extern volatile Time time;
-extern volatile TimeFlags timeFlags;
+int setTime(Time* newTime);
+Time getTime();
+
+void incrementTimeStruct(Time* t, TimeFlags* tflags);
+void decrementTimeStruct(Time* t, TimeFlags* tflags);
 
 #endif

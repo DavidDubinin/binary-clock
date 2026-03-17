@@ -28,25 +28,24 @@ ISR(INT0_vect){
     if(debounce[0] == 0){
         debounce[0] = DEBOUNCE_TIME;
         toggleMinuteMode();
-        continueSetup();
         finishSetup();
+        continueSetup();
     }
 }
 
 //Buttons SET und DBG
 ISR(PCINT0_vect){
   //SET-Button
-  if(!(PINB & (1<<PB3))){
-    if(debounce[1] == 0){
+    if(!(PINB & (1<<PB3)) && debounce[1] == 0){
         debounce[1] = DEBOUNCE_TIME;
+        countUp();
         enterSetupMode();
     }
-  }
+
   //DBG-Button
-  if(!(PINB & (1<<PB4))){
-    if((debounce[2] == 0)){
+    if(!(PINB & (1<<PB4)) && debounce[2] == 0){
         debounce[2] = DEBOUNCE_TIME;
+        countDown();
         toggleDbg();
     }
-  }
 }
