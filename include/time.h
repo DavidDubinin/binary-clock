@@ -4,11 +4,10 @@
 
 #include <avr/io.h>
 
-
 typedef struct {
   uint8_t hours;
   uint8_t minutes;
-  uint8_t seconds;  
+  uint8_t seconds; 
 } Time;
 
 typedef struct {
@@ -20,7 +19,6 @@ typedef struct {
 int setTime(Time* newTime);
 Time getTime();
 
-void incrementTimeStruct(Time* t, TimeFlags* tflags);
-void decrementTimeStruct(Time* t, TimeFlags* tflags);
+void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t backwards);
 
 #endif

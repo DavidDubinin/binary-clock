@@ -10,9 +10,6 @@
 int main(void){
   
   while(1){
-    _delay_ms(1);
-    debouncePass(1);
-
     switch (state) {
       case INIT:
         initState();

@@ -44,6 +44,7 @@ void initPwm(void) {
 
 //Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
+/*
 void initQuartz(void){
     cli();
     //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
@@ -71,6 +72,54 @@ void initQuartz(void){
 
     //Compare Match bei Timer = 255 => OC2A Interrupt Flag Set
     OCR2A = 0xFF;
+
+    //4. To switch to asynchronous operation: Wait for TCN2xUB, OCR2xUB, and TCR2xUB
+    //ASSR = xxx1 1111 BAD
+    //ASSR = xxx0 0000
+    while(ASSR & ((1<<TCN2UB) | (1<<OCR2AUB) | (1<<OCR2BUB) | (1<<TCR2AUB) | (1<<TCR2BUB))){
+    __builtin_avr_nop(); // sigma approved!!!
+    }
+
+    //5. Clear the Timer/Counter2 Interrupt Flags
+    TIFR2 |= (1 << OCF2B) | (1 << OCF2A) | (1 << TOV2);
+
+    //6. Enable interrupts, if needed
+    //Enable Output Compare Match Interrupt A
+    TIMSK2 |= (1 << OCIE2A);
+    sei();
+}
+*/
+
+
+//Watch Crystal 32 768 Hz, Prescaler 1, F_OCnx = 512Hz (1 interrupt per ms) => OCRnx = 63  
+//Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
+void initQuartz(void){
+    cli();
+    //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
+    TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
+
+    //2. Select clock source by setting AS2 as appropriate
+    //Enable Asynchronous Timer/Counter2
+    ASSR |= (1 << AS2);
+
+    //3. Write new values to TCNT2, OCR2x, and TCCR2x.
+    //Toggle OC2A on Compare Match
+
+    TCNT2 = 0x00; //reset timer
+    TCCR2A |= (1 << COM2A0);
+    TCCR2A &= ~(1 << COM2A1);
+
+    //CTC-Mode
+    TCCR2A |= (1 << WGM21);
+    TCCR2A &= ~(1 << WGM20);
+    TCCR2B &= ~(1 << WGM22);
+
+    //CS selection mit Prescaler = 1 (= No prescaler)
+    TCCR2B |= (1 << CS20);
+    TCCR2B &= ~(1 << CS22) & ~(1 << CS21);
+
+    //Compare Match bei Timer = 63 => OC2A Interrupt Flag Set
+    OCR2A = 63;
 
     //4. To switch to asynchronous operation: Wait for TCN2xUB, OCR2xUB, and TCR2xUB
     //ASSR = xxx1 1111 BAD

@@ -2,7 +2,11 @@
 
 #include "driver.h"
 #include "time.h"
+#include "buttons.h"
 #include <avr/interrupt.h>
+
+#define UP 0
+#define DOWN 1
 
 volatile State state = INIT;
 
@@ -10,84 +14,21 @@ volatile State state = INIT;
 STATE CHANGE LOGIC
 ----------------*/
 
-void initialized(void){
-    if(state == INIT) state = SHOW_MINUTES; 
-}
+static void count(uint8_t up){
+    Time newTime = getTime();
+    newTime.seconds = 0;
+    TimeFlags newFlags = {0};
 
-void toggleMinuteMode(void){
-    if(state == SHOW_MINUTES){
-        setLeds(getTime().hours,getTime().seconds);
-        state = SHOW_SECONDS;
+    if(state == SETUP_HOURS) {
+        newFlags.hourPassed = 1;
     }
-    else if(state == SHOW_SECONDS){
-        setLeds(getTime().hours,getTime().minutes);
-        state = SHOW_MINUTES;
+    else if(state == SETUP_MINUTES) {
+        newFlags.minutePassed = 1;
     }
-}
 
-void toggleDbg(){
-    if(state == SHOW_MINUTES || state == SHOW_SECONDS){
-        state = DBG;
-    }
-    else if(state == DBG){
-        state = SHOW_MINUTES;
-    }
-}
-
-void enterSetupMode(void) {
-    if(state == SHOW_MINUTES || state == SHOW_SECONDS) {
-        state = SETUP_HOURS;
-    }
-}
-
-void continueSetup(void){
-    if(state == SETUP_HOURS){
-        state = SETUP_MINUTES;
-    }
-}
-
-void finishSetup(void){
-    if(state == SETUP_MINUTES){
-        state = SHOW_MINUTES;
-    }
-}
-
-void countUp(void) {
-    if(state == SETUP_HOURS || state == SETUP_MINUTES) {
-        Time newTime = getTime();
-        TimeFlags newFlags = {0};
-
-        if(state == SETUP_HOURS) {
-            newFlags.hourPassed = 1;
-        }
-        else {
-            newFlags.minutePassed = 1;
-        }
-
-        incrementTimeStruct(&newTime, &newFlags);
-        newTime.seconds = 0;
-        setTime(&newTime);
-        setLeds(newTime.hours, newTime.minutes);
-    }
-}
-
-void countDown(void) {
-    if(state == SETUP_HOURS || state == SETUP_MINUTES) {
-        Time newTime = getTime();
-        TimeFlags newFlags = {0};
-
-        if(state == SETUP_HOURS) {
-            newFlags.hourPassed = 1;
-        }
-        else {
-            newFlags.minutePassed = 1;
-        }
-
-        decrementTimeStruct(&newTime, &newFlags);
-        newTime.seconds = 0;
-        setTime(&newTime);
-        setLeds(newTime.hours, newTime.minutes);
-    }
+    incrementTimeSetup_reversible(&newTime, &newFlags, up);   
+    setLeds(newTime.hours, newTime.minutes);
+    setTime(&newTime);
 }
 
 
@@ -101,27 +42,95 @@ void initState(void) {
     initPwm();
     initQuartz();
     setLeds(getTime().hours, getTime().minutes);
-    sei();
 
-    initialized();
+    sei();
+    state = SHOW_MINUTES;
 }
 
 void showMinutesState(void){
-    //logic in time.c 
+    //toggleMinutesMode
+    if(buttonFlags.dispPressed){
+        buttonFlags.dispPressed = 0;
+        setLeds(getTime().hours,getTime().seconds);
+        state = SHOW_SECONDS;
+    }
+
+    //enterSetupMode
+    if(buttonFlags.setPressed) {
+        buttonFlags.setPressed = 0;
+        state = SETUP_HOURS;
+    }
+
+    //toggleDbg
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        state = DBG;
+    }
+
 }
 
 void showSecondsState(void){
-    //logic in time.c 
+    //toggleMinutesMode
+    if(buttonFlags.dispPressed){
+        buttonFlags.dispPressed = 0;
+        setLeds(getTime().hours,getTime().minutes);
+        state = SHOW_MINUTES;
+    }
+
+    //enterSetupMode
+    if(buttonFlags.setPressed) {
+        buttonFlags.setPressed = 0;
+        state = SETUP_HOURS;
+    }
+
+    //toggleDbg
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        state = DBG;
+    }
 }
 
 void setupHoursState(void) {
+    //continueSetup
+    if(buttonFlags.dispPressed){
+        buttonFlags.dispPressed = 0;
+        state = SETUP_MINUTES;
+    }
+    //countUp
+    if(buttonFlags.setPressed){
+        buttonFlags.setPressed = 0;
+        count(UP);
+    }
+    //countDown
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        count(DOWN);
+    }
 
 }
 
 void setupMinutesState(void) {
-    
+    //finishSetup
+    if(buttonFlags.dispPressed){
+        buttonFlags.dispPressed = 0;
+        state = SHOW_MINUTES;
+    }
+    //countUp
+    if(buttonFlags.setPressed){
+        buttonFlags.setPressed = 0;
+        count(UP);
+    }
+    //countDown
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        count(DOWN);
+    }
 }
 
 void debugState(void){
-
+    //toggleDbg
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        state = SHOW_MINUTES;
+    }
 }

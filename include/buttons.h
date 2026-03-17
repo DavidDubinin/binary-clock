@@ -9,6 +9,14 @@
 
 extern volatile uint8_t debounce[BUTTON_COUNT];
 
+typedef struct {
+    volatile uint8_t dispPressed;
+    volatile uint8_t setPressed;
+    volatile uint8_t dbgPressed;
+} ButtonFlags;
+
+volatile ButtonFlags buttonFlags;
+
 void debouncePass(uint8_t ms);
 
 #endif

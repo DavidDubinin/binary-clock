@@ -2,13 +2,26 @@
 
 #include "driver.h"
 #include "state.h"
+#include "buttons.h"
+
 #include <avr/interrupt.h>
 
-volatile static Time time;
-volatile static TimeFlags timeFlags;
+volatile static Time time = {0};
+volatile static TimeFlags timeFlags = {0};
+volatile static uint16_t ms = 0;
 
 static inline uint8_t timeIsValid(Time t){
     return t.seconds < 60 && t.minutes < 60 && t.hours < 24;
+}
+
+static void tick_ms(TimeFlags* tflags, uint8_t backwards){
+    if(ms == 999){
+        ms = 0;
+        tflags->secondPassed = 1;
+    }
+    else{
+        ms++;
+    }
 }
 
 static void updateSeconds(Time* t, TimeFlags* tflags, uint8_t backwards){
@@ -42,18 +55,18 @@ static void updateMinutes(Time* t, TimeFlags* tflags, uint8_t backwards){
             t->minutes++;
         }    
     }
-    else{
+    else {
         if (t->minutes == 0){
             t->minutes = 59;
             tflags->hourPassed = 1;
     }
-        else{
+        else {
             t->minutes--;
         }
     }
 }
 
-static void updateHours(Time* t, TimeFlags* tflags, uint8_t backwards){
+static void updateHours(Time* t,TimeFlags* tflags, uint8_t backwards){
     if(!backwards){
         if (t->hours == 23){
             t->hours = 0;
@@ -72,29 +85,41 @@ static void updateHours(Time* t, TimeFlags* tflags, uint8_t backwards){
     }
 }
 
-static void incrementTimeStruct_reversible(Time* t, TimeFlags* tflags, uint8_t backwards){
-    if(tflags->secondPassed){
+static void incrementTime_reversible(Time* t, TimeFlags* tflags, uint8_t backwards) {
+    if(tflags->secondPassed) {
         tflags->secondPassed = 0;
         updateSeconds(t, tflags, backwards);
         if(state == SHOW_SECONDS) setLeds(t->hours,t->seconds);
     }
-    if(tflags->minutePassed){
+    
+    if(tflags->minutePassed) {
         tflags->minutePassed = 0;
         updateMinutes(t, tflags, backwards);
         if(state == SHOW_MINUTES) setLeds(t->hours,t->minutes);
     }
-    if(tflags->hourPassed){
+
+    if(tflags->hourPassed) {
         tflags->hourPassed = 0;
         updateHours(t, tflags, backwards);
     }
 }
 
-void incrementTimeStruct(Time* t, TimeFlags* tflags){ 
-    incrementTimeStruct_reversible(t,tflags,0);
-}
+void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t backwards){
+    TimeFlags dummy = {0}; //Alphawolf approved !!
+    if(newTflags->secondPassed) {
+        newTflags->secondPassed = 0;
+        updateSeconds(newTime, &dummy, backwards);
+    }
+    
+    if(newTflags->minutePassed) {
+        newTflags->minutePassed = 0;
+        updateMinutes(newTime, &dummy, backwards);
+    }
 
-void decrementTimeStruct(Time* t, TimeFlags* tflags) {
-    incrementTimeStruct_reversible(t,tflags,1);
+    if(newTflags->hourPassed) {
+        newTflags->hourPassed = 0;
+        updateHours(newTime, &dummy, backwards);
+    }
 }
 
 int setTime(Time* newTime){
@@ -111,8 +136,23 @@ int setTime(Time* newTime){
 Time getTime(){
     return time;
 }
-
+/*
 ISR(TIMER2_COMPA_vect){ //called every second
     timeFlags.secondPassed = 1;
-    incrementTimeStruct(&time, &timeFlags);
+    incrementTime_reversible(&time, &timeFlags, 0);
+}
+*/
+
+
+//Diskret: Alle 128 Interrupts 3ms entfernen. Alternativ, stetig: Bresenham Algorithmus (hier)
+ISR(TIMER2_COMPA_vect){ //called every ms
+    static uint16_t acc = 0;
+    acc += 1000;
+
+    if(acc >= 1024){
+        acc -= 1024;
+        tick_ms(&timeFlags, 0);
+        debouncePass(1);
+        incrementTime_reversible(&time, &timeFlags, 0);
+    }
 }
