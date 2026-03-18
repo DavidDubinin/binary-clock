@@ -1,35 +1,65 @@
 #include "state.h"
 
 #include "driver.h"
-#include "time.h"
 #include "buttons.h"
+#include "time.h"
+
 #include <avr/interrupt.h>
 
 #define UP 0
 #define DOWN 1
 
 volatile State state = INIT;
+Time newTime;
 
 /*----------------
 STATE CHANGE LOGIC
 ----------------*/
 
-static void count(uint8_t up){
-    Time newTime = getTime();
+static void enterSetupMode(void){
+    if(buttonFlags.setPressed) {
+        buttonFlags.setPressed = 0;
+        newTime = getTime();
+        state = SETUP_HOURS;
+    }
+}
+
+static void enterDbg(void){
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        state = DBG;
+    }
+}
+
+static void count_reversible(uint8_t up){
     newTime.seconds = 0;
+    newTime.milliseconds = 0;
     TimeFlags newFlags = {0};
 
     if(state == SETUP_HOURS) {
         newFlags.hourPassed = 1;
     }
     else if(state == SETUP_MINUTES) {
-        newFlags.minutePassed = 1;
+        newFlags.minutePassed = 1; 
     }
-
     incrementTimeSetup_reversible(&newTime, &newFlags, up);   
     setLeds(newTime.hours, newTime.minutes);
-    setTime(&newTime);
 }
+
+static void count(void){
+    //countUp
+    if(buttonFlags.setPressed){
+        buttonFlags.setPressed = 0;
+        count_reversible(UP);
+    }
+    //countDown
+    if(buttonFlags.dbgPressed){
+        buttonFlags.dbgPressed = 0;
+        count_reversible(DOWN);
+    }
+}
+
+
 
 
 /*------------
@@ -40,7 +70,7 @@ void initState(void) {
     initLeds();
     initButtons();
     initPwm();
-    initQuartz();
+    initQuartz_ms();
     setLeds(getTime().hours, getTime().minutes);
 
     sei();
@@ -55,17 +85,13 @@ void showMinutesState(void){
         state = SHOW_SECONDS;
     }
 
-    //enterSetupMode
-    if(buttonFlags.setPressed) {
-        buttonFlags.setPressed = 0;
-        state = SETUP_HOURS;
+    if(timeFlags_external.minutePassed){
+        timeFlags_external.minutePassed = 0;
+        setLeds(getTime().hours, getTime().minutes);
     }
 
-    //toggleDbg
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
-        state = DBG;
-    }
+    enterSetupMode();
+    enterDbg();
 
 }
 
@@ -77,17 +103,13 @@ void showSecondsState(void){
         state = SHOW_MINUTES;
     }
 
-    //enterSetupMode
-    if(buttonFlags.setPressed) {
-        buttonFlags.setPressed = 0;
-        state = SETUP_HOURS;
+    if(timeFlags_external.secondPassed){
+        timeFlags_external.secondPassed = 0;
+        setLeds(getTime().hours, getTime().seconds);
     }
+    enterSetupMode();
+    enterDbg();
 
-    //toggleDbg
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
-        state = DBG;
-    }
 }
 
 void setupHoursState(void) {
@@ -96,41 +118,24 @@ void setupHoursState(void) {
         buttonFlags.dispPressed = 0;
         state = SETUP_MINUTES;
     }
-    //countUp
-    if(buttonFlags.setPressed){
-        buttonFlags.setPressed = 0;
-        count(UP);
-    }
-    //countDown
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
-        count(DOWN);
-    }
-
+    count();
 }
 
 void setupMinutesState(void) {
     //finishSetup
     if(buttonFlags.dispPressed){
         buttonFlags.dispPressed = 0;
+        setTime(&newTime);
         state = SHOW_MINUTES;
     }
-    //countUp
-    if(buttonFlags.setPressed){
-        buttonFlags.setPressed = 0;
-        count(UP);
-    }
-    //countDown
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
-        count(DOWN);
-    }
+    count();
 }
 
 void debugState(void){
     //toggleDbg
     if(buttonFlags.dbgPressed){
         buttonFlags.dbgPressed = 0;
+        setLeds(getTime().hours, getTime().minutes);
         state = SHOW_MINUTES;
     }
 }

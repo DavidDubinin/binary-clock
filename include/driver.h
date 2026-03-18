@@ -24,10 +24,16 @@ void initButtons(void);
 void initPwm(void);
 
 /*
-  Watch Crystal 32 768 Hz, Prescaler 1, F_OCnx = 512Hz Hz (1 interrupt per ms) => OCRnx = 63  
+  Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
   Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
 */
-void initQuartz(void);
+void initQuartz_seconds(void);
+
+/*
+  Watch Crystal 32 768 Hz, Prescaler 1, F_OCnx = 512Hz Hz (1 interrupt per ms) => OCRnx = 31 
+  Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
+*/
+void initQuartz_ms(void);
 
 /*
 correctly assigns values to PORTD and PORTC, takes 5 bits and 6 bits respectively

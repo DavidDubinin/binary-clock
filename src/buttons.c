@@ -2,16 +2,22 @@
 
 #include <avr/interrupt.h>
 
-volatile uint8_t debounce[BUTTON_COUNT] = {[0 ... BUTTON_COUNT-1] = DEBOUNCE_TIME}; //array {100,100,100}
+static volatile uint8_t debounce[BUTTON_COUNT] = {[0 ... BUTTON_COUNT-1] = DEBOUNCE_TIME}; //array {100,100,100}
 volatile ButtonFlags buttonFlags = {0};
 
 static inline uint8_t min(uint8_t val1, uint8_t val2){
     return val1 < val2 ? val1 : val2;
 }
 
-void debouncePass(uint8_t ms){
+void debouncePass(uint32_t elapsedTime){
     for(uint8_t i = 0; i < BUTTON_COUNT; i++){
-        if(debounce[i] != 0) debounce[i] -= min(debounce[i],ms);
+        if(debounce[i] != 0) debounce[i] -= min(debounce[i], elapsedTime);
+    }
+}
+
+void debouncePass_ms(void){
+    for(uint8_t i = 0; i < BUTTON_COUNT; i++){
+        if(debounce[i] != 0) debounce[i]--;
     }
 }
 

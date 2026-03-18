@@ -28,6 +28,7 @@ vorgeben an der Sie live eine Aufgabe lösen werden.
 ATmega.  
   
   
-=> steuerung + sleepmode  
+=> race conditions fixen  
+=> sleepmode  
 => debug interface  
 => hwp labor action  

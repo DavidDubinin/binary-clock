@@ -8,6 +8,7 @@ typedef struct {
   uint8_t hours;
   uint8_t minutes;
   uint8_t seconds; 
+  uint16_t milliseconds;
 } Time;
 
 typedef struct {
@@ -16,8 +17,10 @@ typedef struct {
   uint8_t secondPassed;
 } TimeFlags;
 
+extern volatile TimeFlags timeFlags_external;
+
 int setTime(Time* newTime);
-Time getTime();
+Time getTime(void);
 
 void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t backwards);
 

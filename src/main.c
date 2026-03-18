@@ -1,14 +1,8 @@
-#define F_CPU 1000000UL
-
 #include "buttons.h"
 #include "time.h"
 #include "state.h"
 
-#include <util/delay.h>
-#include <avr/interrupt.h>
-
 int main(void){
-  
   while(1){
     switch (state) {
       case INIT:

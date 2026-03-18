@@ -1,8 +1,6 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include <avr/io.h>
-
 /*State Machine*/
 typedef enum {
   INIT,

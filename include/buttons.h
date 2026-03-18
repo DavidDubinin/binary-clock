@@ -1,22 +1,20 @@
 #ifndef BUTTONS_H
 #define BUTTONS_H
 
-
 #include <avr/io.h>
 
-#define DEBOUNCE_TIME 100 //in ms
+#define DEBOUNCE_TIME 150 //in ms
 #define BUTTON_COUNT 3
 
-extern volatile uint8_t debounce[BUTTON_COUNT];
-
 typedef struct {
-    volatile uint8_t dispPressed;
-    volatile uint8_t setPressed;
-    volatile uint8_t dbgPressed;
+    uint8_t dispPressed;
+    uint8_t setPressed;
+    uint8_t dbgPressed;
 } ButtonFlags;
 
-volatile ButtonFlags buttonFlags;
+extern volatile ButtonFlags buttonFlags;
 
-void debouncePass(uint8_t ms);
+void debouncePass(uint32_t elapsedTime);
+void debouncePass_ms(void);
 
 #endif

@@ -1,30 +1,19 @@
 #include "time.h"
 
-#include "driver.h"
-#include "state.h"
 #include "buttons.h"
-
 #include <avr/interrupt.h>
 
 volatile static Time time = {0};
 volatile static TimeFlags timeFlags = {0};
-volatile static uint16_t ms = 0;
+
+volatile TimeFlags timeFlags_external = {0};
+
 
 static inline uint8_t timeIsValid(Time t){
-    return t.seconds < 60 && t.minutes < 60 && t.hours < 24;
+    return t.seconds < 60 && t.minutes < 60 && t.hours < 24 && t.milliseconds < 1000;
 }
 
-static void tick_ms(TimeFlags* tflags, uint8_t backwards){
-    if(ms == 999){
-        ms = 0;
-        tflags->secondPassed = 1;
-    }
-    else{
-        ms++;
-    }
-}
-
-static void updateSeconds(Time* t, TimeFlags* tflags, uint8_t backwards){
+static void updateSeconds(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
     if(!backwards){
         if (t->seconds == 59){
             t->seconds = 0;
@@ -45,7 +34,7 @@ static void updateSeconds(Time* t, TimeFlags* tflags, uint8_t backwards){
     }
 }
 
-static void updateMinutes(Time* t, TimeFlags* tflags, uint8_t backwards){
+static void updateMinutes(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
     if(!backwards){
         if (t->minutes == 59){
             t->minutes = 0;
@@ -66,7 +55,7 @@ static void updateMinutes(Time* t, TimeFlags* tflags, uint8_t backwards){
     }
 }
 
-static void updateHours(Time* t,TimeFlags* tflags, uint8_t backwards){
+static void updateHours(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
     if(!backwards){
         if (t->hours == 23){
             t->hours = 0;
@@ -85,17 +74,17 @@ static void updateHours(Time* t,TimeFlags* tflags, uint8_t backwards){
     }
 }
 
-static void incrementTime_reversible(Time* t, TimeFlags* tflags, uint8_t backwards) {
+static void incrementTime_reversible(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards) {
     if(tflags->secondPassed) {
         tflags->secondPassed = 0;
         updateSeconds(t, tflags, backwards);
-        if(state == SHOW_SECONDS) setLeds(t->hours,t->seconds);
+        timeFlags_external.secondPassed = 1;
     }
     
     if(tflags->minutePassed) {
         tflags->minutePassed = 0;
         updateMinutes(t, tflags, backwards);
-        if(state == SHOW_MINUTES) setLeds(t->hours,t->minutes);
+        timeFlags_external.minutePassed = 1;
     }
 
     if(tflags->hourPassed) {
@@ -122,6 +111,17 @@ void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t 
     }
 }
 
+static void tick_ms(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
+    if(t->milliseconds == 999){
+        t->milliseconds = 0;
+        tflags->secondPassed = 1;
+        incrementTime_reversible(t, tflags, 0);
+    }
+    else{
+        t->milliseconds++;
+    }
+}
+
 int setTime(Time* newTime){
     if(timeIsValid(*newTime)){
         time = *newTime;
@@ -133,16 +133,9 @@ int setTime(Time* newTime){
     return -1;
 }
 
-Time getTime(){
+Time getTime(void){
     return time;
 }
-/*
-ISR(TIMER2_COMPA_vect){ //called every second
-    timeFlags.secondPassed = 1;
-    incrementTime_reversible(&time, &timeFlags, 0);
-}
-*/
-
 
 //Diskret: Alle 128 Interrupts 3ms entfernen. Alternativ, stetig: Bresenham Algorithmus (hier)
 ISR(TIMER2_COMPA_vect){ //called every ms
@@ -151,8 +144,7 @@ ISR(TIMER2_COMPA_vect){ //called every ms
 
     if(acc >= 1024){
         acc -= 1024;
-        tick_ms(&timeFlags, 0);
-        debouncePass(1);
-        incrementTime_reversible(&time, &timeFlags, 0);
+        debouncePass_ms();
+        tick_ms(&time, &timeFlags, 0);
     }
 }

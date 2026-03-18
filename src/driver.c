@@ -44,8 +44,7 @@ void initPwm(void) {
 
 //Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
-/*
-void initQuartz(void){
+void initQuartz_seconds(void){
     cli();
     //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
     TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
@@ -88,12 +87,27 @@ void initQuartz(void){
     TIMSK2 |= (1 << OCIE2A);
     sei();
 }
-*/
 
 
-//Watch Crystal 32 768 Hz, Prescaler 1, F_OCnx = 512Hz (1 interrupt per ms) => OCRnx = 63  
+//Watch Crystal 32 768 Hz, Prescaler 1, F_OCnx = 512Hz (1 interrupt per ms) => OCRnx = 31  
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
-void initQuartz(void){
+
+// F_OCnx = F_clkIO / (2 * N * (1 + OCRnx))
+// F_Interrupt = 2 * F_OCnx (2x Interrupts in einer Periode CTC)
+// F_interrupt = 2 * ( F_clkIO / (2 * N * (1 + OCRnx)) )
+// F_interrupt = 2 * ( 32 768Hz / (2 * 1 * (1 + OCRnx)) )
+// F_interrupt = 2 * ( 32 768Hz / (2 * 1 * (1 + 63)) ) = 512Hz F_Interrupts ↯ wollen aber 1024Hz 
+
+
+// Gleichung
+// 1024 Hz = 32 768Hz / (1*(1 + OCRnx))          | * 1*(1+OCRnx)
+// 1024 Hz * (1 + OCRnx) = 32 768 Hz             | / 1024
+// 1 + OCRnx = 32 768 Hz / 1024 Hz
+// 1 + OCRnx = 32                                | - 1
+// OCRnx = 31 bei 1024 Iterrupts/s
+
+
+void initQuartz_ms(void){
     cli();
     //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
     TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
@@ -118,8 +132,8 @@ void initQuartz(void){
     TCCR2B |= (1 << CS20);
     TCCR2B &= ~(1 << CS22) & ~(1 << CS21);
 
-    //Compare Match bei Timer = 63 => OC2A Interrupt Flag Set
-    OCR2A = 63;
+    //Compare Match bei Timer = 31 => OC2A Interrupt Flag Set | siehe Rechnung oben
+    OCR2A = 31;
 
     //4. To switch to asynchronous operation: Wait for TCN2xUB, OCR2xUB, and TCR2xUB
     //ASSR = xxx1 1111 BAD
