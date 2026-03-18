@@ -5,6 +5,7 @@
 #include "time.h"
 
 #include <avr/interrupt.h>
+#include <util/atomic.h>
 
 #define UP 0
 #define DOWN 1
@@ -15,21 +16,6 @@ Time newTime;
 /*----------------
 STATE CHANGE LOGIC
 ----------------*/
-
-static void enterSetupMode(void){
-    if(buttonFlags.setPressed) {
-        buttonFlags.setPressed = 0;
-        newTime = getTime();
-        state = SETUP_HOURS;
-    }
-}
-
-static void enterDbg(void){
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
-        state = DBG;
-    }
-}
 
 static void count_reversible(uint8_t up){
     newTime.seconds = 0;
@@ -47,14 +33,28 @@ static void count_reversible(uint8_t up){
 }
 
 static void count(void){
+    uint8_t up = 0;
+    uint8_t down = 0;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
     //countUp
-    if(buttonFlags.setPressed){
-        buttonFlags.setPressed = 0;
+        if(buttonFlags.setPressed){
+            buttonFlags.setPressed = 0;
+            up = 1;
+        }
+
+    //countDown
+        if(buttonFlags.dbgPressed){
+            buttonFlags.dbgPressed = 0;
+            down = 1;
+        }
+    }
+    
+    if(up){
         count_reversible(UP);
     }
-    //countDown
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
+    
+    else if(down){
         count_reversible(DOWN);
     }
 }
@@ -71,71 +71,162 @@ void initState(void) {
     initButtons();
     initPwm();
     initQuartz_ms();
-    setLeds(getTime().hours, getTime().minutes);
+
+    Time t = getTime();
+    setLeds(t.hours, t.minutes);
 
     sei();
     state = SHOW_MINUTES;
 }
 
 void showMinutesState(void){
-    //toggleMinutesMode
-    if(buttonFlags.dispPressed){
-        buttonFlags.dispPressed = 0;
-        setLeds(getTime().hours,getTime().seconds);
+    uint8_t dispPressed = 0;
+    uint8_t setPressed = 0;
+    uint8_t dbgPressed = 0;
+    uint8_t minPassed = 0;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        //toggleMinutesMode
+        if(buttonFlags.dispPressed){
+            buttonFlags.dispPressed = 0;
+            dispPressed = 1;
+        }
+
+        //enterSetup
+        if(buttonFlags.setPressed) {
+            buttonFlags.setPressed = 0;
+            setPressed = 1;
+        }
+        
+        //update Leds 
+        if(timeFlags_external.minutePassed){
+            timeFlags_external.minutePassed = 0;
+            minPassed = 1;
+        }
+
+        //enterDbg
+        if(buttonFlags.dbgPressed) {
+            buttonFlags.dbgPressed = 0;
+            dbgPressed = 1;
+        }
+    }
+
+    if(setPressed){
+        newTime = getTime();
+        state = SETUP_HOURS;
+    }
+    
+
+    else if(dispPressed) {
+        Time t = getTime();
+        setLeds(t.hours,t.seconds);
         state = SHOW_SECONDS;
     }
 
-    if(timeFlags_external.minutePassed){
-        timeFlags_external.minutePassed = 0;
-        setLeds(getTime().hours, getTime().minutes);
+    else if(dbgPressed) state = DBG;
+
+    if(minPassed){
+        Time t = getTime();
+        setLeds(t.hours, t.minutes);
     }
-
-    enterSetupMode();
-    enterDbg();
-
 }
 
 void showSecondsState(void){
-    //toggleMinutesMode
-    if(buttonFlags.dispPressed){
-        buttonFlags.dispPressed = 0;
-        setLeds(getTime().hours,getTime().minutes);
+    uint8_t dispPressed = 0;
+    uint8_t setPressed = 0;
+    uint8_t dbgPressed = 0;
+    uint8_t secPassed = 0;
+
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        //toggleMinutesMode
+        if(buttonFlags.dispPressed){
+            buttonFlags.dispPressed = 0;
+            dispPressed = 1;
+        }
+
+        //enterSetup
+        if(buttonFlags.setPressed) {
+            buttonFlags.setPressed = 0;
+            setPressed = 1;
+        }
+        
+        //update Leds 
+        if(timeFlags_external.secondPassed){
+            timeFlags_external.secondPassed = 0;
+            secPassed = 1;
+        }
+
+        //enterDbg
+        if(buttonFlags.dbgPressed) {
+            buttonFlags.dbgPressed = 0;
+            dbgPressed = 1;
+        }
+    }
+
+    if(setPressed){
+        newTime = getTime();
+        state = SETUP_HOURS;
+    }
+    
+
+    else if(dispPressed) {
+        Time t = getTime();
+        setLeds(t.hours,t.minutes);
         state = SHOW_MINUTES;
     }
 
-    if(timeFlags_external.secondPassed){
-        timeFlags_external.secondPassed = 0;
-        setLeds(getTime().hours, getTime().seconds);
-    }
-    enterSetupMode();
-    enterDbg();
+    else if(dbgPressed) state = DBG;
 
+    if(secPassed){
+        Time t = getTime();
+        setLeds(t.hours, t.seconds);
+    }
 }
 
 void setupHoursState(void) {
     //continueSetup
-    if(buttonFlags.dispPressed){
-        buttonFlags.dispPressed = 0;
-        state = SETUP_MINUTES;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        if(buttonFlags.dispPressed){
+            buttonFlags.dispPressed = 0;
+            state = SETUP_MINUTES;
+        }
     }
+
     count();
 }
 
 void setupMinutesState(void) {
+    uint8_t dispPressed = 0;
     //finishSetup
-    if(buttonFlags.dispPressed){
-        buttonFlags.dispPressed = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        if(buttonFlags.dispPressed){
+            buttonFlags.dispPressed = 0;
+            dispPressed = 1;
+        }
+    }
+    
+    if(dispPressed) {
         setTime(&newTime);
         state = SHOW_MINUTES;
     }
+    
     count();
 }
 
 void debugState(void){
     //toggleDbg
-    if(buttonFlags.dbgPressed){
-        buttonFlags.dbgPressed = 0;
-        setLeds(getTime().hours, getTime().minutes);
+    uint8_t dbgPressed = 0;
+    
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        if(buttonFlags.dbgPressed){
+            buttonFlags.dbgPressed = 0;
+            dbgPressed = 1;
+        }
+    }
+    
+    if(dbgPressed) {
+        Time t = getTime();
+        setLeds(t.hours, t.minutes);
         state = SHOW_MINUTES;
     }
 }

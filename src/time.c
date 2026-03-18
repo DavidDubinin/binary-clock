@@ -2,6 +2,7 @@
 
 #include "buttons.h"
 #include <avr/interrupt.h>
+#include <util/atomic.h>
 
 volatile static Time time = {0};
 volatile static TimeFlags timeFlags = {0};
@@ -10,7 +11,7 @@ volatile TimeFlags timeFlags_external = {0};
 
 
 static inline uint8_t timeIsValid(Time t){
-    return t.seconds < 60 && t.minutes < 60 && t.hours < 24 && t.milliseconds < 1000;
+    return  t.milliseconds < 1000 && t.seconds < 60 && t.minutes < 60 && t.hours < 24;
 }
 
 static void updateSeconds(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
@@ -93,6 +94,17 @@ static void incrementTime_reversible(volatile Time* t, volatile TimeFlags* tflag
     }
 }
 
+static void tick_ms(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
+    if(t->milliseconds == 999){
+        t->milliseconds = 0;
+        tflags->secondPassed = 1;
+        incrementTime_reversible(t, tflags, 0);
+    }
+    else{
+        t->milliseconds++;
+    }
+}
+
 void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t backwards){
     TimeFlags dummy = {0}; //Alphawolf approved !!
     if(newTflags->secondPassed) {
@@ -111,30 +123,26 @@ void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t 
     }
 }
 
-static void tick_ms(volatile Time* t, volatile TimeFlags* tflags, uint8_t backwards){
-    if(t->milliseconds == 999){
-        t->milliseconds = 0;
-        tflags->secondPassed = 1;
-        incrementTime_reversible(t, tflags, 0);
-    }
-    else{
-        t->milliseconds++;
-    }
-}
-
 int setTime(Time* newTime){
-    if(timeIsValid(*newTime)){
-        time = *newTime;
-        timeFlags.hourPassed = 0;
-        timeFlags.minutePassed = 0;
-        timeFlags.secondPassed = 0;
-        return 0;
-    }
+        if(timeIsValid(*newTime)){
+            ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+                time = *newTime;
+                timeFlags.hourPassed = 0;
+                timeFlags.minutePassed = 0;
+                timeFlags.secondPassed = 0;
+            }
+            return 0;
+        }
     return -1;
 }
 
+
 Time getTime(void){
-    return time;
+    Time t;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        t = time;
+    }
+    return t;
 }
 
 //Diskret: Alle 128 Interrupts 3ms entfernen. Alternativ, stetig: Bresenham Algorithmus (hier)

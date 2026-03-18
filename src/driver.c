@@ -1,9 +1,13 @@
 #include "driver.h"
 #include <avr/interrupt.h>
 
+#include <util/atomic.h>
+
 void initLeds(void) {
+    cli();
     DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
     DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit
+    sei();
 }
 
 void initButtons(void) {
@@ -106,7 +110,6 @@ void initQuartz_seconds(void){
 // 1 + OCRnx = 32                                | - 1
 // OCRnx = 31 bei 1024 Iterrupts/s
 
-
 void initQuartz_ms(void){
     cli();
     //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
@@ -152,7 +155,8 @@ void initQuartz_ms(void){
 }
 
 void setLeds(uint8_t hourLedsVal, uint8_t minuteLedsVal) {
-  //^need to be reversed
-  PORTD = __builtin_avr_insert_bits(0x01234FFF, hourLedsVal, PORTD); // portd 7 bis 3  stunden
-  PORTC = __builtin_avr_insert_bits(0xFF012345, minuteLedsVal, PORTC); //portc 5 bis 0 Sekunden
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        PORTD = __builtin_avr_insert_bits(0x01234FFF, hourLedsVal, PORTD); // portd 7 bis 3  stunden
+        PORTC = __builtin_avr_insert_bits(0xFF012345, minuteLedsVal, PORTC); //portc 5 bis 0 Sekunden
+    }
 }
