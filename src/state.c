@@ -1,8 +1,9 @@
 #include "state.h"
 
-#include "driver.h"
-#include "buttons.h"
-#include "time.h"
+#include "driver.h"//alles
+#include "buttons.h"//buttonFlags
+#include "time.h"//Time types
+#include "sleepTimer.h"//configMinimalPower()
 
 #include <avr/interrupt.h>
 #include <util/atomic.h>
@@ -67,11 +68,12 @@ STATE LOGIC
 ------------*/
 
 void initState(void) {
-    initUnused();
+    cli();
     initLeds();
     initButtons();
     initPwm();
     initQuartz_ms();
+    configMinimalPower();
 
     Time t = getTime();
     setLeds(t.hours, t.minutes);

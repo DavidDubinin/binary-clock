@@ -7,14 +7,14 @@
 #define DUTY_CYCLE 1 // in %
 
 /*
-Sets unused GPIO pins to Output LOW
-*/
-void initUnused(void);
-
-/*
-Sets relevant DDRx registers
+Sets relevant DDRx registers to output mode
 */
 void initLeds(void);
+
+/*
+Sets relevant PORTx registers to LOW 
+*/
+void disableLeds(void);
 
 /*
 sets up Button DDRx registers, internal pullups and configures INT0 and PCINT0 interrupts

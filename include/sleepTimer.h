@@ -4,9 +4,14 @@
 #include <avr/io.h>
 
 
-#define SLEEP_TIME (uint32_t)5*1000 //in ms
+#define SLEEP_TIME (uint32_t)30*1000 //in ms
 
-extern volatile uint32_t sleepTimer;
+volatile uint32_t sleepTimer;
+
+/*
+Sets unused GPIO pins to Output LOW
+*/
+void configMinimalPower(void);
 
 void trySleep(void);
 

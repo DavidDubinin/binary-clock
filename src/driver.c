@@ -3,24 +3,17 @@
 
 #include <util/atomic.h>
 
-
-//PB0 und PB5 als active-high input
-void initUnused(void){
-    cli();
-    DDRB  &= ~(1 << PB0) & ~(1 << PB5);  
-    PORTB |= (1 << PB0) | ( 1<< PB5);
-    sei();
-}
-
 void initLeds(void) {
-    cli();
     DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
     DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit
-    sei();
+}
+
+void disableLeds(void){
+    PORTD &= ~(1 << PD3) & ~(1 << PD4) & ~(1 << PD5) & ~(1 << PD6) & ~(1 << PD7); // Stundenpins, 5 bit
+    PORTC &= ~(1 << PC0) & ~(1 << PC1) & ~(1 << PC2) & ~(1 << PC3) & ~(1 << PC4) & ~(1 << PC5); // Minutenpins, 6 bit
 }
 
 void initButtons(void) {
-    cli();
     //set Button pins as inputs
     DDRD &= ~(1 << PD2);
     DDRB &= ~(1 << PB3) & ~(1 << PB4);
@@ -37,11 +30,9 @@ void initButtons(void) {
     //Enable PCINT7..0 interrupt und Maske for PCINT3..4
     PCICR |= (1 << PCIE0);
     PCMSK0 |= (1 << PCINT3) | (1 << PCINT4);
-    sei();
 }
  
 void initPwm(void) {
-    cli();
     DDRB |= (1 << DDB1) | (1 << DDB2); // OC1A/PB1 bzw OC1B/PB2 auf Output für Stunden/Minuten
 
     TCCR1A |= (1 << WGM10) | (1 << WGM11) | (1 << COM1A1) 
@@ -52,13 +43,11 @@ void initPwm(void) {
 
     OCR1A = (1023 * DUTY_CYCLE) / 100;
     OCR1B = (1023 * DUTY_CYCLE) / 100;
-    sei();
-    }
+}
 
 //Watch Crystal 32 768 Hz, Prescaler 128, F_OCnx = 1/2 Hz (1 interrupt per sec) => OCRnx = 255  
 //Toggle OC2A on Compare Match, CTC Mode, TOP=OCR2A
 void initQuartz_seconds(void){
-    cli();
     //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
     TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
 
@@ -98,8 +87,8 @@ void initQuartz_seconds(void){
     //6. Enable interrupts, if needed
     //Enable Output Compare Match Interrupt A
     TIMSK2 |= (1 << OCIE2A);
-    sei();
 }
+
 
 
 //Watch Crystal 32 768 Hz, Prescaler 1, F_OCnx = 512Hz (1 interrupt per ms) => OCRnx = 31  
@@ -120,7 +109,6 @@ void initQuartz_seconds(void){
 // OCRnx = 31 bei 1024 Iterrupts/s
 
 void initQuartz_ms(void){
-    cli();
     //1. Disable the Timer/Counter2 interrupts by clearing OCIE2x and TOIE2
     TIMSK2 &= ~(1<<OCIE2A) & ~(1<<OCIE2B) & ~(1<<TOIE2);
 
@@ -160,8 +148,8 @@ void initQuartz_ms(void){
     //6. Enable interrupts, if needed
     //Enable Output Compare Match Interrupt A
     TIMSK2 |= (1 << OCIE2A);
-    sei();
 }
+
 
 void setLeds(uint8_t hourLedsVal, uint8_t minuteLedsVal) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
