@@ -14,7 +14,6 @@ typedef struct {
 
 extern volatile ButtonFlags buttonFlags;
 
-void debouncePass(uint32_t elapsedTime);
 void debouncePass_ms(void);
 
 #endif

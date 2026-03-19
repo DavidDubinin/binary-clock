@@ -5,9 +5,11 @@
 volatile uint32_t sleepTimer = SLEEP_TIME;
 
 void trySleep(void){
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
-        if(sleepTimer == 0) sleep_cpu();
+    ATOMIC_BLOCK(ATOMIC_FORCEON){
+        if(sleepTimer == 0) sleep_enable();
     }
+    sleep_cpu();
+    sleep_disable();
 }
 
 void sleepTimerPass_ms(void){

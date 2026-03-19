@@ -4,7 +4,7 @@
 #include <avr/io.h>
 
 
-#define SLEEP_TIME (uint32_t)200000 //in ms
+#define SLEEP_TIME (uint32_t)5*1000 //in ms
 
 extern volatile uint32_t sleepTimer;
 
