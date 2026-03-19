@@ -7,6 +7,11 @@
 #define DUTY_CYCLE 1 // in %
 
 /*
+Sets unused GPIO pins to Output LOW
+*/
+void initUnused(void);
+
+/*
 Sets relevant DDRx registers
 */
 void initLeds(void);

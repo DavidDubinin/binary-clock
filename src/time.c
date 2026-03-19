@@ -1,6 +1,7 @@
 #include "time.h"
 
 #include "buttons.h"
+#include "sleepTimer.h"
 #include <avr/interrupt.h>
 
 volatile static Time time = {0};
@@ -145,6 +146,7 @@ ISR(TIMER2_COMPA_vect){ //called every ms
     if(acc >= 1024){
         acc -= 1024;
         debouncePass_ms();
+        sleepTimerPass_ms();
         tick_ms(&time, &timeFlags, 0);
     }
 }

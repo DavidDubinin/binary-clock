@@ -1,6 +1,15 @@
 #include "driver.h"
 #include <avr/interrupt.h>
 
+
+//PB0 und PB5 als active-high input
+void initUnused(void){
+    cli();
+    DDRB  &= ~(1 << PB0) & ~(1 << PB5);  
+    PORTB |= (1 << PB0) | ( 1<< PB5);
+    sei();
+}
+
 void initLeds(void) {
     DDRD |= (1 << PD3) | (1 << PD4) | (1 << PD5) | (1 << PD6) | (1 << PD7); // Stundenpins, 5 bit
     DDRC |= (1 << PC0) | (1 << PC1) | (1 << PC2) | (1 << PC3) | (1 << PC4) | (1 << PC5); // Minutenpins, 6 bit

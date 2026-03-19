@@ -67,6 +67,7 @@ STATE LOGIC
 ------------*/
 
 void initState(void) {
+    initUnused();
     initLeds();
     initButtons();
     initPwm();

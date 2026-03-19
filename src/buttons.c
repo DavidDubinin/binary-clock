@@ -1,4 +1,5 @@
 #include "buttons.h"
+#include "sleepTimer.h"
 
 #include <avr/interrupt.h>
 
@@ -29,8 +30,10 @@ void debouncePass_ms(void){
 ISR(INT0_vect){
     if(debounce[0] == 0){
         debounce[0] = DEBOUNCE_TIME;
+        sleepTimer = SLEEP_TIME;
         buttonFlags.dispPressed = 1;
     }
+
 }
 
 //Buttons SET und DBG
@@ -38,12 +41,14 @@ ISR(PCINT0_vect){
   //SET-Button
     if(!(PINB & (1<<PB3)) && debounce[1] == 0){
         debounce[1] = DEBOUNCE_TIME;
+        sleepTimer = SLEEP_TIME;
         buttonFlags.setPressed = 1;
     }
 
   //DBG-Button
     if(!(PINB & (1<<PB4)) && debounce[2] == 0){
         debounce[2] = DEBOUNCE_TIME;
+        sleepTimer = SLEEP_TIME;
         buttonFlags.dbgPressed = 1;;
     }
 }
