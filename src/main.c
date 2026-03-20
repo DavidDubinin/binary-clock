@@ -1,11 +1,10 @@
 #include "buttons.h"//button interrupts
 #include "time.h"//1ms interrupt
+#include "uart.h"//RX interrupt
 #include "state.h"
-#include "sleepTimer.h"
 
 int main(void){
   while(1){
-    trySleep();
     switch (state) {
       case INIT:
         initState();
@@ -30,9 +29,10 @@ int main(void){
       case DBG:
         debugState();
         break;
-      
+
       default:
-        return 0;
+        state = INIT;
+        break;
     }
   }
 }

@@ -4,6 +4,7 @@
 #include "buttons.h"//buttonFlags
 #include "time.h"//Time types
 #include "sleepTimer.h"//configMinimalPower()
+#include "uart.h"
 
 #include <avr/interrupt.h>
 #include <util/atomic.h>
@@ -74,15 +75,17 @@ void initState(void) {
     initPwm();
     initQuartz_ms();
     configMinimalPower();
+    initUart();
 
     Time t = getTime();
     setLeds(t.hours, t.minutes);
 
-    sei();
     state = SHOW_MINUTES;
+    sei();
 }
 
 void showMinutesState(void){
+    trySleep();
     uint8_t dispPressed = 0;
     uint8_t setPressed = 0;
     uint8_t dbgPressed = 0;
@@ -117,6 +120,7 @@ void showMinutesState(void){
     if(setPressed){
         newTime = getTime();
         state = SETUP_HOURS;
+        return;
     }
     
 
@@ -124,9 +128,13 @@ void showMinutesState(void){
         Time t = getTime();
         setLeds(t.hours,t.seconds);
         state = SHOW_SECONDS;
+        return;
     }
 
-    else if(dbgPressed) state = DBG;
+    else if(dbgPressed){
+        state = DBG;
+        return;
+    };
 
     if(minPassed){
         Time t = getTime();
@@ -135,6 +143,7 @@ void showMinutesState(void){
 }
 
 void showSecondsState(void){
+    trySleep();
     uint8_t dispPressed = 0;
     uint8_t setPressed = 0;
     uint8_t dbgPressed = 0;
@@ -169,6 +178,7 @@ void showSecondsState(void){
     if(setPressed){
         newTime = getTime();
         state = SETUP_HOURS;
+        return;
     }
     
 
@@ -176,9 +186,13 @@ void showSecondsState(void){
         Time t = getTime();
         setLeds(t.hours,t.minutes);
         state = SHOW_MINUTES;
+        return;
     }
 
-    else if(dbgPressed) state = DBG;
+    else if(dbgPressed){
+        state = DBG;
+        return;
+    }
 
     if(secPassed){
         Time t = getTime();
@@ -187,11 +201,13 @@ void showSecondsState(void){
 }
 
 void setupHoursState(void) {
+    trySleep();
     //continueSetup
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         if(buttonFlags.dispPressed){
             buttonFlags.dispPressed = 0;
             state = SETUP_MINUTES;
+            return;
         }
     }
 
@@ -199,6 +215,7 @@ void setupHoursState(void) {
 }
 
 void setupMinutesState(void) {
+    trySleep();
     uint8_t dispPressed = 0;
     //finishSetup
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -211,6 +228,7 @@ void setupMinutesState(void) {
     if(dispPressed) {
         setTime(&newTime);
         state = SHOW_MINUTES;
+        return;
     }
     
     count();
@@ -226,10 +244,12 @@ void debugState(void){
             dbgPressed = 1;
         }
     }
-    
     if(dbgPressed) {
         Time t = getTime();
         setLeds(t.hours, t.minutes);
         state = SHOW_MINUTES;
+        return;
     }
+    processUart();
+
 }
