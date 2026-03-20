@@ -30,3 +30,11 @@ ATmega.
   
 => debug interface  
 => hwp labor action  
+
+
+//selbst gemessen
+I_active=
+I_powersave=
+U=3.5V  
+
+//mit crazy formel
