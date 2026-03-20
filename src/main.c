@@ -1,6 +1,6 @@
 #include "buttons.h"//button interrupts
 #include "time.h"//1ms interrupt
-#include "uart.h"//RX interrupt
+#include "uart.h"
 #include "state.h"
 
 int main(void){
