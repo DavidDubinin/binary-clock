@@ -4,13 +4,15 @@
 #include <avr/io.h>
 #include <string.h>
 
-// ceil(log10(2^n))=5 <- anzahl an dezimalstellen bei n bit 
-
+// ceil(log10(2^n))=MAX_DIGITS <- max anzahl an dezimalstellen bei n bit 
 #define MAX_DIGITS 5
-#define NUMSTRING_SIZE MAX_DIGITS+1
 
-static inline char digitToASCII(uint8_t digit){
+static inline char digitToAscii(uint8_t digit){
     return '0'+ (char)digit;
+}
+
+static inline uint8_t asciiToDigit(char digit){
+    return (uint8_t)digit - '0';
 }
 
 static void extractDigits(uint16_t num, uint8_t* buffer){
@@ -21,17 +23,24 @@ static void extractDigits(uint16_t num, uint8_t* buffer){
     buffer[4] = num % 10;
 }
 
+static uint8_t findFirstIndex(uint8_t* digits, uint8_t digitCount){
+    uint8_t i = 0;
+    while(digits[i] == 0 && i < MAX_DIGITS-digitCount){
+        i++;
+    }
+    return i;
+}
 
-static void numToString(uint16_t num, char* buffer){ 
-    uint8_t digits[MAX_DIGITS] = {0,0,0,0,0};
-
+static void numToString(uint16_t num, char* buffer, uint8_t size){ 
+    uint8_t digits[MAX_DIGITS] = {0};
     extractDigits(num, digits);
 
-    for(uint8_t i = 0; i < MAX_DIGITS; i++){
-        buffer[i] = digitToASCII(digits[i]);
+    uint8_t start = findFirstIndex(digits, size-1);
+
+    for(uint8_t i = 0; i < size-1; i++){
+        buffer[i] = digitToAscii(digits[start+i]);
     }
-    
-    buffer[MAX_DIGITS] = '\0';
+    buffer[size-1] = '\0';
 }
 
 static void txUart(char data){
@@ -39,10 +48,10 @@ static void txUart(char data){
     UDR0 = data;
 }
 
-static uint8_t rxUart(void) {
+static char rxUart(void) {
     if((UCSR0A & (1 << RXC0))){
         uint8_t data = UDR0;
-        return data;
+        return (char)data;
     }
     return 0x00;
 }
@@ -53,8 +62,9 @@ static void receiveString(char* buffer, uint8_t length){
     }
 }
 
+//doesnt send last symbol (\0)
 static void sendString(char* string, uint8_t length){
-    for(uint8_t i = 0; i < length; i++){
+    for(uint8_t i = 0; i < length-1; i++){
         txUart(string[i]);
     }
 }
@@ -78,30 +88,61 @@ void initUart(void){
 static void sendTime(void) {
     Time t = getTime();
 
-    char stringBuffer[NUMSTRING_SIZE] = {0,0,0,0,0,0};
+    char hourString[3] = {0};
+    char minString[3] = {0};
+    char secString[3] = {0};
+    char msString[4] = {0};
 
-    sendString("willkommen im hardwarelabor! viel spaß!\r\n", 43);
-    numToString(t.hours, stringBuffer);
-    sendString(stringBuffer, NUMSTRING_SIZE);
-    sendString(":", 1);
-    numToString(t.minutes, stringBuffer);
-    sendString(stringBuffer, NUMSTRING_SIZE);
-    sendString(":", 1);
-    numToString(t.seconds, stringBuffer);
-    sendString(stringBuffer, NUMSTRING_SIZE);
-    sendString(":", 1);
-    numToString(t.milliseconds, stringBuffer);
-    sendString(stringBuffer, NUMSTRING_SIZE);
+    numToString(t.hours, hourString, sizeof(hourString));
+    sendString(hourString, sizeof(hourString));
+    sendString(":", 2);
 
+    numToString(t.minutes, minString, sizeof(minString));
+    sendString(minString, sizeof(minString));
+    sendString(":", 2);
+
+    numToString(t.seconds, secString, sizeof(secString));
+    sendString(secString, sizeof(secString));
+    sendString(".", 2);
+
+    numToString(t.milliseconds, msString, sizeof(msString));
+    sendString(msString, sizeof(msString));
     sendString("\r\n", 3);
 
 }
 
-void processUart(void){
-    char commandBuffer[4] = {0};
-    receiveString(commandBuffer, 4);
+//WIP
+static void receiveTime(void){
+    char receivedData[sizeof(Time)] = {0};
+    receiveString(receivedData, sizeof(receivedData));
 
-    if(strcmp(commandBuffer, UART_RX_SYM_TIME_REQ) == 0){
+    Time received;
+    if(setTime(&received) == -1){
+
+    }
+
+}
+
+void processUart(void){
+    /*
+    char commandBuffer[COMMAND_LENGTH] = {0};
+    receiveString(commandBuffer, COMMAND_LENGTH);
+
+    if(strncmp(commandBuffer, UART_RX_SYM_TIME_REQ, COMMAND_LENGTH) == 0){
         sendTime();
     }
+    */
+
+    switch (rxUart())
+    {
+    case UART_RX_SYM_TIME_REQ:
+        sendTime();
+        break;
+    case UART_RX_SYM_TIME_PROVIDE:
+        receiveTime();
+        break;
+    default:
+        break;
+    }
+
 }

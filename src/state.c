@@ -235,9 +235,9 @@ void setupMinutesState(void) {
 }
 
 void debugState(void){
-    //toggleDbg
+    processUart();
     uint8_t dbgPressed = 0;
-    
+    //toggleDbg
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         if(buttonFlags.dbgPressed){
             buttonFlags.dbgPressed = 0;
@@ -250,6 +250,4 @@ void debugState(void){
         state = SHOW_MINUTES;
         return;
     }
-    processUart();
-
 }

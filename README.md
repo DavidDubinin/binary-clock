@@ -31,10 +31,13 @@ ATmega.
 => debug interface  
 => hwp labor action  
 
+=> save code size
+=> maybe switch to sec time base + internal time
 
 //selbst gemessen
-I_active=
-I_powersave=
+I_active=~937.0 microAmps
+I_powersave=~170.0 microAmps
+I_powersavesec = ~7microAmps
 U=3.5V  
 
 //mit crazy formel
