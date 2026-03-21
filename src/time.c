@@ -124,7 +124,7 @@ void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t 
     }
 }
 
-int setTime(Time* newTime){
+uint8_t setTime(Time* newTime){
         if(timeIsValid(*newTime)){
             ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
                 time = *newTime;
@@ -132,9 +132,9 @@ int setTime(Time* newTime){
                 timeFlags.minutePassed = 0;
                 timeFlags.secondPassed = 0;
             }
-            return 0;
+            return 1;
         }
-    return -1;
+    return 0;
 }
 
 

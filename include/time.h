@@ -19,7 +19,7 @@ typedef struct {
 
 extern volatile TimeFlags timeFlags_external;
 
-int setTime(Time* newTime);
+uint8_t setTime(Time* newTime);
 Time getTime(void);
 
 void incrementTimeSetup_reversible(Time* newTime, TimeFlags* newTflags, uint8_t backwards);
