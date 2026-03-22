@@ -1,10 +1,18 @@
 # BINARY CLOCK SIGMA EDITION AVR CODE - ATMEGA48
 
+![pcb_render](./images/binaryclock.png)
+![schematic](./images/schematic.svg)
+![pcb](./images/pcb.png)
 
-![schematic](./binaryclock-kicad/binaryclock.svg)
-![pcb](./binaryclock-kicad/pcb.png)
-![pcb_render](./binaryclock-kicad/binaryclock.png)
- 
+![buttonaction](./images/buttonaction.png)
+![correction](./images/correction.png)
+![mszeitbasis](./images/mszeitbasis.png)
+![states](./images/states.png)
+
+![periodendauer](./images/periodendauer.jpeg)
+![normalmodus](./images/normalmodus.jpeg)
+![stromsparmodus](./images/stromsparmodus.jpeg)
+![stromsparmodussec](./images/stromsparmodussec.jpeg)
   
 Prüufung (Folie 1/2)  
 ▶ Präsentation + Fachfragen (20min) Ihrer Lösung der Komplexaufgabe  
@@ -21,9 +29,8 @@ Fachfragen
 vorgeben an der Sie live eine Aufgabe lösen werden.  
 ▶ Als Hilfsmittel haben Sie hierfür Ihren Sourcecode sowie das Datenblatt des
 ATmega.  
-  
-  
-=> save code size  
+
+---
   
 //selbst gemessen  
 I_active= 937.00 μA 
